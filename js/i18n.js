@@ -24,7 +24,7 @@ export const IT = {
 
     'about.title': 'Piacere di <span class="hl hl--orange">conoscerti</span>.',
     'about.p1': 'Sono Francesco, ingegnere informatico di Catania. Da qualche anno lavoro come software engineer in <strong>Fincons Group</strong>, soprattutto sul backend: sviluppo API REST in Java e TypeScript, mi occupo di PostgreSQL e MongoDB e, quando serve, do una mano sul frontend con Vue.js.',
-    'about.p2': 'Mi piace capire come funzionano le cose — e come si rompono. È una curiosità che ho da quando ero bambino e che oggi ha un nome: cybersecurity. La sto studiando passo dopo passo su <strong>TryHackMe</strong> e metto in pratica quello che imparo in piccoli tool open source scritti in <strong>Go</strong>.',
+    'about.p2': 'Mi piace capire come funzionano le cose — e come si rompono. È una curiosità che ho da quando ero bambino e che ora sto trasformando in studio vero: approfondisco la cybersecurity su <strong>TryHackMe</strong> e, quando posso, la metto in pratica scrivendo piccoli tool open source in <strong>Go</strong>.',
     'about.p3': 'Lontano dalla tastiera: pittura, sentieri di montagna e film thriller o horror — più sono cupi, meglio è.',
     'about.note': 'bravo a: parlare con le persone, lavorare in team, lavorare da solo, sbrogliare problemi ✓',
     'about.s1': '<span class="mono">vivo a</span>Catania, IT',

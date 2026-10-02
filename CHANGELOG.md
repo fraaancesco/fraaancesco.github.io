@@ -5,6 +5,7 @@ Aggiungi una riga ogni volta che cambi qualcosa di visibile.
 
 ## 2026-10
 
+- **Training**: tolta la riga "TryHackMe" dalla voce Cybersecurity.
 - **Training**: voci in ordine cronologico (diploma → laurea → cybersecurity).
 - **Documentazione**: `docs/STYLE.md` (guida di stile), `docs/CONTENT.md` (come aggiungere contenuti), `CLAUDE.md` (regole per le sessioni AI), questo changelog.
 - **Sparks / Stimoli**: nuova sezione (work in progress) per trekking, foto e dipinti, con polaroid filtrabili e lightbox. Contenuti in `js/stimoli.js`.

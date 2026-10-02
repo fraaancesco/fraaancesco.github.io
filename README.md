@@ -15,7 +15,8 @@ Live at <https://fraaancesco.github.io>.
 ```
 index.html      page markup and content
 css/main.css    design system + layout
-js/main.js      interactions (nav, reveals, timeline, skills orbit, case studies)
+js/main.js      interactions + English content for skills, waypoints and case studies
+js/i18n.js      Italian translations (language switch EN/IT, English by default)
 src/scene.js    Three.js scene source
 js/scene.js     built bundle (committed, served by GitHub Pages)
 404.html        custom not-found page
@@ -29,4 +30,5 @@ npm run build   # rebuilds js/scene.js after editing src/scene.js
 npm run serve   # http://localhost:8080
 ```
 
-Content (skills, project case studies) lives in the `SKILLS` and `PROJECTS` objects at the top of `js/main.js`.
+Content (skills, project case studies) lives in the `SKILLS` and `PROJECTS` objects at the top of `js/main.js`;
+their Italian versions, and every translated string in the page (`data-i18n` keys), are in `js/i18n.js`.

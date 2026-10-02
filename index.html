@@ -19,7 +19,7 @@
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>
 
   <!-- the world: CSS sky + one WebGL canvas with the volcano -->
   <div class="sky" aria-hidden="true"></div>
@@ -51,14 +51,18 @@
       </a>
       <nav aria-label="Primary">
         <ul class="nav__links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#experience">Route</a></li>
-          <li><a href="#skills">Backpack</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#education">Training</a></li>
-          <li><a href="#contact" class="nav__summit">Summit ▲</a></li>
+          <li><a href="#about" data-i18n="nav.about">About</a></li>
+          <li><a href="#experience" data-i18n="nav.route">Route</a></li>
+          <li><a href="#skills" data-i18n="nav.pack">Backpack</a></li>
+          <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
+          <li><a href="#education" data-i18n="nav.training">Training</a></li>
+          <li><a href="#contact" class="nav__summit" data-i18n="nav.summit">Summit ▲</a></li>
         </ul>
       </nav>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="it" aria-pressed="false">IT</button>
+      </div>
       <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu">
         <span class="sr-only">Open menu</span>
         <span class="nav__toggle-bars" aria-hidden="true"></span>
@@ -69,33 +73,33 @@
   <div class="menu" id="menu" hidden>
     <nav aria-label="Mobile">
       <ol class="menu__links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#experience">Route</a></li>
-        <li><a href="#skills">Backpack</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#education">Training</a></li>
-        <li><a href="#contact">Summit ▲</a></li>
+        <li><a href="#about" data-i18n="nav.about">About</a></li>
+        <li><a href="#experience" data-i18n="nav.route">Route</a></li>
+        <li><a href="#skills" data-i18n="nav.pack">Backpack</a></li>
+        <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
+        <li><a href="#education" data-i18n="nav.training">Training</a></li>
+        <li><a href="#contact" data-i18n="nav.summit">Summit ▲</a></li>
       </ol>
     </nav>
-    <p class="menu__note hand">psst — the volcano is real-time 3D</p>
+    <p class="menu__note hand" data-i18n="menu.note">psst — the volcano is real-time 3D</p>
   </div>
 
   <main id="main">
     <!-- ───────── HERO · sea level ───────── -->
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="hero__inner">
-        <p class="hero__hi hand" data-hero-item>hi, I'm</p>
+        <p class="hero__hi hand" data-hero-item data-i18n="hero.hi">hi, I'm</p>
         <h1 class="hero__title" id="hero-title">
           <span class="hero__line"><span class="hero__word" data-scramble>Francesco</span></span>
           <span class="hero__line"><span class="hero__word hero__word--grad" data-scramble>Pistorio</span></span>
         </h1>
-        <p class="hero__lede" data-hero-item>
+        <p class="hero__lede" data-hero-item data-i18n="hero.lede">
           Backend engineer by day, <mark class="hl hl--pink">security nerd</mark> by night —
           writing APIs at the foot of a volcano.
         </p>
         <div class="hero__ctas" data-hero-item>
-          <a class="btn btn--lime" href="#about" data-magnetic>Start the climb <span aria-hidden="true">↓</span></a>
-          <a class="btn btn--ghost" href="#contact" data-magnetic>Skip to the top <span aria-hidden="true">▲</span></a>
+          <a class="btn btn--lime" href="#about" data-magnetic data-i18n="hero.cta1">Start the climb <span aria-hidden="true">↓</span></a>
+          <a class="btn btn--ghost" href="#contact" data-magnetic data-i18n="hero.cta2">Skip to the top <span aria-hidden="true">▲</span></a>
         </div>
       </div>
     </section>
@@ -105,28 +109,28 @@
       <div class="panel panel--about" data-reveal>
         <div class="about">
           <div class="about__text">
-            <h2 class="title" id="about-title">Who's this <span class="hl hl--orange">guy</span>?</h2>
-            <p class="big">
+            <h2 class="title" id="about-title" data-i18n="about.title">Who's this <span class="hl hl--orange">guy</span>?</h2>
+            <p class="big" data-i18n="about.p1">
               A Computer Engineer from Catania. Since 2022 I've been at <strong>Fincons Group</strong> building
               the stuff you don't see — REST APIs, services, databases — and, when needed, the Vue.js screens on top.
             </p>
-            <p>
-              Security has been my thing since I was a kid. These days that curiosity finally has an outlet:
-              breaking boxes on <strong>TryHackMe</strong> and writing little security tools in <strong>Go</strong>.
+            <p data-i18n="about.p2">
+              Security has been my thing since I was a kid. These days I'm finally studying it properly —
+              on <strong>TryHackMe</strong> and by writing little security tools in <strong>Go</strong>.
             </p>
-            <p>
+            <p data-i18n="about.p3">
               Away from the keyboard you'll find me painting, out on a hiking trail, or watching a thriller
               or a horror movie with the lights off.
             </p>
-            <p class="hand about__note">good at: talking to humans, teamwork, working solo, untangling problems ✓</p>
+            <p class="hand about__note" data-i18n="about.note">good at: talking to humans, teamwork, working solo, untangling problems ✓</p>
           </div>
 
           <ul class="stickers" aria-label="Quick facts">
-            <li class="sticker sticker--lime" style="--r:-4deg"><span class="mono">based in</span>Catania, IT</li>
-            <li class="sticker sticker--pink" style="--r:3deg"><span class="mono">day job</span>Software Engineer @ Fincons</li>
-            <li class="sticker sticker--cyan" style="--r:-2deg"><span class="mono">currently</span>deep into Go &amp; security</li>
-            <li class="sticker sticker--orange" style="--r:5deg"><span class="mono">off-duty</span>painting · hiking · horror films</li>
-            <li class="sticker sticker--cream" style="--r:-3deg"><span class="mono">speaks</span>Italian (native) · English (pro)</li>
+            <li class="sticker sticker--lime" style="--r:-4deg" data-i18n="about.s1"><span class="mono">based in</span>Catania, IT</li>
+            <li class="sticker sticker--pink" style="--r:3deg" data-i18n="about.s2"><span class="mono">day job</span>Software Engineer @ Fincons</li>
+            <li class="sticker sticker--cyan" style="--r:-2deg" data-i18n="about.s3"><span class="mono">currently</span>deep into Go &amp; security</li>
+            <li class="sticker sticker--orange" style="--r:5deg" data-i18n="about.s4"><span class="mono">off-duty</span>painting · hiking · horror films</li>
+            <li class="sticker sticker--cream" style="--r:-3deg" data-i18n="about.s5"><span class="mono">speaks</span>Italian (native) · English (pro)</li>
           </ul>
         </div>
       </div>
@@ -135,8 +139,8 @@
     <!-- ───────── EXPERIENCE ───────── -->
     <section class="chapter" id="experience" aria-labelledby="exp-title">
       <div class="panel" data-reveal>
-        <h2 class="title" id="exp-title">The route <span class="hl hl--cyan">so far</span></h2>
-        <p class="sub">My path, drawn as an elevation profile. Tap a waypoint.</p>
+        <h2 class="title" id="exp-title" data-i18n="exp.title">The route <span class="hl hl--cyan">so far</span></h2>
+        <p class="sub" data-i18n="exp.sub">My path, drawn as an elevation profile. Tap a waypoint.</p>
 
         <div class="profile" id="profile">
           <svg class="profile__svg" viewBox="0 0 1000 240" preserveAspectRatio="none" aria-hidden="true">
@@ -159,7 +163,7 @@
             <li style="--x:30%;--y:74%"><button type="button" data-wp="1"><span class="mono">2017</span></button></li>
             <li style="--x:71.4%;--y:40%"><button type="button" data-wp="2" class="is-key"><span class="mono">2022</span></button></li>
             <li style="--x:85.7%;--y:29%"><button type="button" data-wp="3"><span class="mono">2024</span></button></li>
-            <li style="--x:99%;--y:16.6%"><button type="button" data-wp="4" class="is-now"><span class="mono">now</span></button></li>
+            <li style="--x:99%;--y:16.6%"><button type="button" data-wp="4" class="is-now" data-i18n="wp.now"><span class="mono">now</span></button></li>
           </ol>
           <p class="profile__caption" aria-live="polite"><span class="mono" id="wp-year">2022</span> <span id="wp-text">Joined Fincons Group as a Software Engineer — and wrapped up the degree in October.</span></p>
         </div>
@@ -167,14 +171,14 @@
         <div class="jobs">
           <article class="job job--pink" data-job>
             <button class="job__head" type="button" aria-expanded="true" aria-controls="job-fincons">
-              <span class="job__when mono">Apr 2022 → now · Catania</span>
+              <span class="job__when mono" data-i18n="job1.when">Apr 2022 → now · Catania</span>
               <span class="job__role">Software Engineer</span>
               <span class="job__org">@ Fincons Group</span>
-              <span class="job__tldr hand">full-stack on paper, backend at heart</span>
+              <span class="job__tldr hand" data-i18n="job1.tldr">full-stack on paper, backend at heart</span>
               <span class="job__plus" aria-hidden="true"></span>
             </button>
             <div class="job__body" id="job-fincons">
-              <ul class="job__list">
+              <ul class="job__list" data-i18n="job1.list">
                 <li><b>Spring Boot</b> — scalable, high-performance REST APIs in Java</li>
                 <li><b>NestJS + TypeScript</b> — RESTful services on Node.js</li>
                 <li><b>PostgreSQL &amp; MongoDB</b> — looking after the data</li>
@@ -187,16 +191,15 @@
 
           <article class="job job--cyan" data-job>
             <button class="job__head" type="button" aria-expanded="false" aria-controls="job-thm">
-              <span class="job__when mono">2024 → now · online · extracurricular</span>
+              <span class="job__when mono" data-i18n="job2.when">2024 → now · online · extracurricular</span>
               <span class="job__role">Active Learner</span>
               <span class="job__org">@ TryHackMe</span>
-              <span class="job__tldr hand">learning to think like the attacker</span>
+              <span class="job__tldr hand" data-i18n="job2.tldr">studying cybersecurity, one step at a time</span>
               <span class="job__plus" aria-hidden="true"></span>
             </button>
             <div class="job__body" id="job-thm">
-              <ul class="job__list">
-                <li><b>Practice</b> — penetration testing, web exploitation, privilege escalation</li>
-                <li><b>Rooms done</b> — OWASP Top 10, Linux fundamentals, network scanning</li>
+              <ul class="job__list" data-i18n="job2.list">
+                <li><b>Studying</b> — cybersecurity, still a work in progress</li>
                 <li><b>Profile</b> — <a href="https://www.tryhackme.com/p/fraaancois" target="_blank" rel="noopener">tryhackme.com/p/fraaancois ↗</a></li>
               </ul>
             </div>
@@ -208,25 +211,25 @@
     <!-- ───────── SKILLS ───────── -->
     <section class="chapter" id="skills" aria-labelledby="skills-title">
       <div class="panel" data-reveal>
-        <h2 class="title" id="skills-title">What's in the <span class="hl hl--lime">backpack</span></h2>
-        <p class="sub">Everything I carry up the mountain, sorted by how often I reach for it. Hover or tap anything.</p>
+        <h2 class="title" id="skills-title" data-i18n="skills.title">What's in the <span class="hl hl--lime">backpack</span></h2>
+        <p class="sub" data-i18n="skills.sub">Everything I carry up the mountain, sorted by how often I reach for it. Hover or tap anything.</p>
 
         <div class="filters" role="group" aria-label="Filter by category">
-          <button type="button" class="filter is-on" data-filter="all" aria-pressed="true">everything</button>
+          <button type="button" class="filter is-on" data-filter="all" data-i18n="filter.all" aria-pressed="true">everything</button>
           <button type="button" class="filter" data-filter="backend" aria-pressed="false" style="--c:var(--pink)">back-end</button>
-          <button type="button" class="filter" data-filter="lang" aria-pressed="false" style="--c:var(--cream)">languages</button>
-          <button type="button" class="filter" data-filter="data" aria-pressed="false" style="--c:var(--cyan)">data</button>
+          <button type="button" class="filter" data-filter="lang" data-i18n="filter.lang" aria-pressed="false" style="--c:var(--cream)">languages</button>
+          <button type="button" class="filter" data-filter="data" data-i18n="filter.data" aria-pressed="false" style="--c:var(--cyan)">data</button>
           <button type="button" class="filter" data-filter="devops" aria-pressed="false" style="--c:var(--yellow)">devops</button>
           <button type="button" class="filter" data-filter="frontend" aria-pressed="false" style="--c:var(--lime)">front-end</button>
-          <button type="button" class="filter" data-filter="security" aria-pressed="false" style="--c:var(--orange)">security</button>
+          <button type="button" class="filter" data-filter="security" data-i18n="filter.security" aria-pressed="false" style="--c:var(--orange)">security</button>
         </div>
 
         <div class="pack">
           <div class="pack__cols" id="pack"></div>
           <aside class="pack__note" aria-live="polite">
-            <p class="pack__cat mono" id="skill-cat">pick something</p>
+            <p class="pack__cat mono" id="skill-cat" data-i18n="skills.pick">pick something</p>
             <p class="pack__name" id="skill-name">↖</p>
-            <p class="pack__text" id="skill-text">Each item says where it actually shows up in my work.</p>
+            <p class="pack__text" id="skill-text" data-i18n="skills.hint">Each item says where it actually shows up in my work.</p>
           </aside>
         </div>
       </div>
@@ -235,8 +238,8 @@
     <!-- ───────── PROJECTS ───────── -->
     <section class="chapter" id="projects" aria-labelledby="projects-title">
       <div class="panel panel--bare" data-reveal>
-        <h2 class="title" id="projects-title">Stuff I built <span class="hl hl--pink">along the way</span></h2>
-        <p class="sub">Two Go security tools and one gloriously messy game. Open any of them.</p>
+        <h2 class="title" id="projects-title" data-i18n="proj.title">Stuff I built <span class="hl hl--pink">along the way</span></h2>
+        <p class="sub" data-i18n="proj.sub">Two Go security tools and one gloriously messy game. Open any of them.</p>
       </div>
 
       <div class="posters">
@@ -247,9 +250,9 @@
           <div class="poster__body">
             <p class="poster__kicker mono">01 · Go · open source</p>
             <h3 class="poster__title">HTTP Header Security Scanner</h3>
-            <p>Point it at some URLs, it tells you which security headers are missing or wrong — and how bad that is.</p>
+            <p data-i18n="proj.scanner">Point it at some URLs, it tells you which security headers are missing or wrong — and how bad that is.</p>
             <ul class="tags"><li>Go</li><li>Gin</li><li>Swagger</li><li>Docker</li></ul>
-            <button class="poster__open" type="button" data-open="scanner">open the case study <span aria-hidden="true">→</span></button>
+            <button class="poster__open" type="button" data-open="scanner" data-i18n="proj.open">open the case study <span aria-hidden="true">→</span></button>
           </div>
         </article>
 
@@ -263,9 +266,9 @@
           <div class="poster__body">
             <p class="poster__kicker mono">02 · Go · AppSec</p>
             <h3 class="poster__title">JWT Token Analyzer</h3>
-            <p>Feed it a JWT, it decodes it and calls out everything sketchy: <code>alg: none</code>, no expiry, embedded keys…</p>
+            <p data-i18n="proj.jwt">Feed it a JWT, it decodes it and calls out everything sketchy: <code>alg: none</code>, no expiry, embedded keys…</p>
             <ul class="tags"><li>Go</li><li>Gin</li><li>Swagger</li><li>Docker Compose</li></ul>
-            <button class="poster__open" type="button" data-open="jwt">open the case study <span aria-hidden="true">→</span></button>
+            <button class="poster__open" type="button" data-open="jwt" data-i18n="proj.open">open the case study <span aria-hidden="true">→</span></button>
           </div>
         </article>
 
@@ -276,14 +279,14 @@
               <path d="M10 60c40 80 100-40 140 50s80 40 70-70 70 80 90 0"/>
               <path d="M20 150c50-60 80 10 120-40s70 40 110-20 40-60 60-30"/>
             </svg>
-            <span class="viz-fugo__note hand">↑ actual architecture diagram*</span>
+            <span class="viz-fugo__note hand" data-i18n="proj.fugonote">↑ actual architecture diagram*</span>
           </div>
           <div class="poster__body">
-            <p class="poster__kicker mono">03 · Unity · uni project</p>
+            <p class="poster__kicker mono" data-i18n="proj.fugokick">03 · Unity · uni project</p>
             <h3 class="poster__title">FUGO PUGO</h3>
-            <p>A video game made with a university mate. Singletons, design patterns, version control — and some honest spaghetti.</p>
+            <p data-i18n="proj.fugo">A video game made with a university mate. Singletons, design patterns, version control — and some honest spaghetti.</p>
             <ul class="tags"><li>Unity</li><li>Design patterns</li><li>Git</li></ul>
-            <button class="poster__open" type="button" data-open="fugo">open the case study <span aria-hidden="true">→</span></button>
+            <button class="poster__open" type="button" data-open="fugo" data-i18n="proj.open">open the case study <span aria-hidden="true">→</span></button>
           </div>
         </article>
       </div>
@@ -294,15 +297,15 @@
       <ul class="signs">
         <li class="sign sign--pink" data-reveal>
           <span class="sign__value"><span data-count data-since="2022-04-01">4</span>+</span>
-          <span class="sign__label">years shipping real software <em>since April 2022</em></span>
+          <span class="sign__label" data-i18n="stats.years">years shipping real software <em>since April 2022</em></span>
         </li>
         <li class="sign sign--lime" data-reveal>
           <span class="sign__value" data-count="2">2</span>
-          <span class="sign__label">open-source security tools <em>written in Go</em></span>
+          <span class="sign__label" data-i18n="stats.tools">open-source security tools <em>written in Go</em></span>
         </li>
         <li class="sign sign--orange" data-reveal>
           <span class="sign__value" data-count="4">4</span>
-          <span class="sign__label">programming languages <em>Go · Java · TypeScript · JavaScript</em></span>
+          <span class="sign__label" data-i18n="stats.langs">programming languages <em>Go · Java · TypeScript · JavaScript</em></span>
         </li>
       </ul>
     </section>
@@ -310,22 +313,22 @@
     <!-- ───────── EDUCATION ───────── -->
     <section class="chapter" id="education" aria-labelledby="edu-title">
       <div class="panel panel--narrow" data-reveal>
-        <h2 class="title" id="edu-title">Training <span class="hl hl--cyan">camp</span></h2>
+        <h2 class="title" id="edu-title" data-i18n="edu.title">Training <span class="hl hl--cyan">camp</span></h2>
         <ol class="edu">
           <li>
             <span class="edu__when mono">2017 → 2022</span>
-            <h3>B.S. in Computer Engineering</h3>
+            <h3 data-i18n="edu.bs">B.S. in Computer Engineering</h3>
             <p>Università di Catania</p>
           </li>
           <li>
             <span class="edu__when mono">2012 → 2017</span>
-            <h3>Technical diploma in Computer Science</h3>
+            <h3 data-i18n="edu.diploma">Technical diploma in Computer Science</h3>
             <p>ITI Guglielmo Marconi, Catania</p>
           </li>
           <li>
-            <span class="edu__when mono">2024 → now</span>
-            <h3>Offensive security, self-taught</h3>
-            <p>TryHackMe — OWASP Top 10, Linux fundamentals, network scanning</p>
+            <span class="edu__when mono" data-i18n="edu.thmwhen">2024 → now</span>
+            <h3 data-i18n="edu.thm">Cybersecurity — currently studying</h3>
+            <p>TryHackMe</p>
           </li>
         </ol>
       </div>
@@ -334,9 +337,9 @@
     <!-- ───────── CONTACT · the summit ───────── -->
     <section class="summit" id="contact" aria-labelledby="contact-title">
       <div class="summit__inner">
-        <p class="hand summit__hand" data-reveal>you made it to the top!</p>
-        <h2 class="summit__title" id="contact-title" data-reveal>Now say <span class="summit__hi">hi.</span></h2>
-        <p class="summit__lede" data-reveal>New challenges, a side project, a chat about backend or security — my inbox is open.</p>
+        <p class="hand summit__hand" data-reveal data-i18n="contact.hand">you made it to the top!</p>
+        <h2 class="summit__title" id="contact-title" data-reveal data-i18n="contact.title">Now say <span class="summit__hi">hi.</span></h2>
+        <p class="summit__lede" data-reveal data-i18n="contact.lede">New challenges, a side project, a chat about backend or security — my inbox is open.</p>
         <div class="summit__cta" data-reveal>
           <a class="btn btn--lime btn--xl" href="mailto:fraaancoisdev@gmail.com" data-magnetic>fraaancoisdev@gmail.com <span aria-hidden="true">↗</span></a>
           <button class="copy mono" type="button" data-copy="fraaancoisdev@gmail.com"><span class="copy__label">copy email</span></button>
@@ -349,8 +352,8 @@
       </div>
       <footer class="footer mono">
         <span>© <span id="year">2026</span> Francesco Pistorio</span>
-        <span>hand-made in Catania, with a volcano watching</span>
-        <a href="#top">back to sea level ↓</a>
+        <span data-i18n="footer.made">hand-made in Catania, with a volcano watching</span>
+        <a href="#top" data-i18n="footer.top">back to sea level ↓</a>
       </footer>
     </section>
   </main>
@@ -364,13 +367,13 @@
         <h2 class="case__title" id="case-title"></h2>
         <p class="case__lede" id="case-lede"></p>
         <div class="case__grid">
-          <section><h3 class="case__h mono">the problem</h3><p id="case-problem"></p></section>
-          <section><h3 class="case__h mono">what I built</h3><ul class="case__list" id="case-built"></ul></section>
+          <section><h3 class="case__h mono" data-i18n="case.problem">the problem</h3><p id="case-problem"></p></section>
+          <section><h3 class="case__h mono" data-i18n="case.built">what I built</h3><ul class="case__list" id="case-built"></ul></section>
           <section><h3 class="case__h mono">stack</h3><ul class="tags" id="case-stack"></ul></section>
-          <section><h3 class="case__h mono">the result</h3><p id="case-result"></p></section>
+          <section><h3 class="case__h mono" data-i18n="case.result">the result</h3><p id="case-result"></p></section>
         </div>
         <div class="case__extra" id="case-extra"></div>
-        <a class="btn btn--dark" id="case-link" href="#" target="_blank" rel="noopener">see it on GitHub ↗</a>
+        <a class="btn btn--dark" id="case-link" href="#" target="_blank" rel="noopener" data-i18n="case.link">see it on GitHub ↗</a>
       </div>
     </div>
   </dialog>

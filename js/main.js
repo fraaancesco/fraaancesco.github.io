@@ -1,5 +1,7 @@
 /* Francesco Pistorio — portfolio interactions (no dependencies). */
 
+import { IT } from './i18n.js';
+
 const root = document.documentElement;
 const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -9,6 +11,33 @@ reduceMQ.addEventListener?.('change', (e) => { reduced = e.matches; });
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+/* ─────────────────────────────── Language ─────────────────────────────── */
+
+// English is the default and lives in the markup; Italian comes from i18n.js.
+const EN_UI = {
+  openMenu: 'Open menu', closeMenu: 'Close menu', copy: 'copy email', copied: 'copied ✓', focus: ' · current focus',
+  whatItChecks: 'what it checks', whatItFlags: 'what it flags',
+  sev: { critical: 'critical', high: 'high', medium: 'medium', low: 'low', lowInfo: 'low / info' },
+};
+let lang = 'en';
+try { if (localStorage.getItem('lang') === 'it') lang = 'it'; } catch { /* storage unavailable */ }
+const t = (k) => (lang === 'it' ? IT.ui : EN_UI)[k];
+const sev = (k) => (lang === 'it' ? IT.ui : EN_UI).sev[k];
+const enHtml = new Map();
+const enMeta = { title: document.title, description: document.querySelector('meta[name="description"]').content };
+
+function applyStatic() {
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    if (!enHtml.has(el)) enHtml.set(el, el.innerHTML);
+    const it = IT.static[el.dataset.i18n];
+    el.innerHTML = lang === 'it' && it != null ? it : enHtml.get(el);
+  });
+  root.lang = lang;
+  document.title = lang === 'it' ? IT.meta.title : enMeta.title;
+  document.querySelector('meta[name="description"]').content = lang === 'it' ? IT.meta.description : enMeta.description;
+  document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+}
 
 /* ─────────────────────────────── Content ─────────────────────────────── */
 
@@ -28,20 +57,16 @@ const SKILLS = [
   { name: 'HTML5', cat: 'frontend', tier: 2, text: 'Front-end foundations — this site is hand-written HTML.' },
   { name: 'CSS', cat: 'frontend', tier: 2, text: 'Front-end foundations — every wobbly sticker here is plain CSS.' },
   { name: 'Docker', cat: 'devops', tier: 2, text: 'Both of my Go security tools ship with Docker / Docker Compose.' },
-  { name: 'Linux', cat: 'devops', tier: 2, text: 'In the DevOps toolbox, plus the Linux fundamentals rooms on TryHackMe.' },
+  { name: 'Linux', cat: 'devops', tier: 2, text: 'Part of my DevOps toolbox.' },
   { name: 'CI/CD', cat: 'devops', tier: 2, text: 'Part of my DevOps toolbox.' },
   { name: 'Go', cat: 'lang', tier: 3, focus: true, text: 'My current obsession. Two open-source security tools so far: an HTTP header scanner and a JWT analyzer.' },
   { name: 'Gin', cat: 'backend', tier: 3, text: 'The Go web framework behind both of my security tools.' },
-  { name: 'Pentesting', cat: 'security', tier: 3, focus: true, text: 'Practising penetration testing on TryHackMe since 2024.' },
-  { name: 'Web exploitation', cat: 'security', tier: 3, text: 'Hands-on web exploitation techniques on TryHackMe.' },
-  { name: 'Privilege escalation', cat: 'security', tier: 3, text: 'Privilege-escalation techniques practised on TryHackMe.' },
-  { name: 'OWASP Top 10', cat: 'security', tier: 3, text: 'Completed the OWASP Top 10 room on TryHackMe.' },
-  { name: 'Network scanning', cat: 'security', tier: 3, text: 'Completed network scanning rooms on TryHackMe.' },
+  { name: 'Cybersecurity', cat: 'security', tier: 3, focus: true, text: 'What I\'m studying right now, on TryHackMe.' },
 ];
 const POCKETS = [
   { tier: 1, title: 'every day', hint: 'what I use daily at Fincons' },
   { tier: 2, title: 'in the pack', hint: 'always with me, used when needed' },
-  { tier: 3, title: 'learning the ropes ★', hint: 'current focus & after-hours practice' },
+  { tier: 3, title: 'learning the ropes ★', hint: 'what I\'m studying right now' },
 ];
 const CAT_LABEL = { backend: 'back-end', lang: 'language', data: 'database', devops: 'devops', frontend: 'front-end', security: 'security' };
 
@@ -49,7 +74,7 @@ const WAYPOINTS = [
   ['2012', 'Started a technical diploma in Computer Science at ITI Guglielmo Marconi.'],
   ['2017', 'Began Computer Engineering at the Università di Catania.'],
   ['2022', 'Joined Fincons Group as a Software Engineer in April — and wrapped up the degree in October.'],
-  ['2024', 'Started practising offensive security on TryHackMe.'],
+  ['2024', 'Started studying cybersecurity on TryHackMe.'],
   ['now', 'Shipping APIs at Fincons by day, writing security tools in Go by night.'],
 ];
 
@@ -73,11 +98,11 @@ const PROJECTS = {
     stack: ['Go', 'Gin', 'Swagger / OpenAPI', 'Docker', 'Make'],
     result: 'An open-source tool that turns a header audit into one API call with a severity-ranked, actionable report.',
     link: 'https://github.com/fraaancesco/http-header-security-scanner',
-    extra: () => `<h3 class="case__h mono">what it checks</h3>${sevBlock([
-      ['sev-crit', 'critical', 2, 'Strict-Transport-Security, Content-Security-Policy'],
-      ['sev-high', 'high', 5, 'X-Frame-Options, X-Content-Type-Options, COOP, CORP, COEP'],
-      ['sev-med', 'medium', 4, 'Referrer-Policy, Permissions-Policy, Cache-Control, Clear-Site-Data'],
-      ['sev-low', 'low', 13, 'X-XSS-Protection, X-Permitted-Cross-Domain-Policies, X-DNS-Prefetch-Control and more'],
+    extra: () => `<h3 class="case__h mono">${t('whatItChecks')}</h3>${sevBlock([
+      ['sev-crit', sev('critical'), 2, 'Strict-Transport-Security, Content-Security-Policy'],
+      ['sev-high', sev('high'), 5, 'X-Frame-Options, X-Content-Type-Options, COOP, CORP, COEP'],
+      ['sev-med', sev('medium'), 4, 'Referrer-Policy, Permissions-Policy, Cache-Control, Clear-Site-Data'],
+      ['sev-low', sev('low'), 13, `X-XSS-Protection, X-Permitted-Cross-Domain-Policies, X-DNS-Prefetch-Control ${lang === 'it' ? 'e altri' : 'and more'}`],
     ])}`,
   },
   jwt: {
@@ -96,11 +121,11 @@ const PROJECTS = {
     stack: ['Go 1.21+', 'Gin', 'Swagger / OpenAPI', 'Docker Compose'],
     result: 'An open-source analyser that explains, check by check, why a token is risky — laid out as cmd / internal / pkg like a proper Go service.',
     link: 'https://github.com/fraaancesco/JWT-token-analyzer',
-    extra: () => `<h3 class="case__h mono">what it flags</h3>${sevBlock([
-      ['sev-crit', 'critical', 5, 'ALG_NONE, ALG_MISSING, JWK_EMBEDDED, EMPTY_SIGNATURE, MALFORMED_TOKEN'],
-      ['sev-high', 'high', 7, 'ALG_UNKNOWN, JKU_PRESENT, X5U_PRESENT, KID_INJECTION, NO_EXPIRATION, TOKEN_EXPIRED, VERY_LONG_EXPIRATION'],
-      ['sev-med', 'medium', 7, 'ALG_WEAK_HMAC, X5C_PRESENT, LONG_EXPIRATION, NO_ISSUER, NO_AUDIENCE, IAT_FUTURE, SENSITIVE_DATA'],
-      ['sev-low', 'low / info', 5, 'NO_IAT, NO_SUBJECT, NO_JTI, ALG_SYMMETRIC, NOT_YET_VALID'],
+    extra: () => `<h3 class="case__h mono">${t('whatItFlags')}</h3>${sevBlock([
+      ['sev-crit', sev('critical'), 5, 'ALG_NONE, ALG_MISSING, JWK_EMBEDDED, EMPTY_SIGNATURE, MALFORMED_TOKEN'],
+      ['sev-high', sev('high'), 7, 'ALG_UNKNOWN, JKU_PRESENT, X5U_PRESENT, KID_INJECTION, NO_EXPIRATION, TOKEN_EXPIRED, VERY_LONG_EXPIRATION'],
+      ['sev-med', sev('medium'), 7, 'ALG_WEAK_HMAC, X5C_PRESENT, LONG_EXPIRATION, NO_ISSUER, NO_AUDIENCE, IAT_FUTURE, SENSITIVE_DATA'],
+      ['sev-low', sev('lowInfo'), 5, 'NO_IAT, NO_SUBJECT, NO_JTI, ALG_SYMMETRIC, NOT_YET_VALID'],
     ])}`,
   },
   fugo: {
@@ -157,7 +182,7 @@ const menu = $('#menu');
 
 function setMenu(open) {
   toggle.setAttribute('aria-expanded', String(open));
-  $('.sr-only', toggle).textContent = open ? 'Close menu' : 'Open menu';
+  $('.sr-only', toggle).textContent = open ? t('closeMenu') : t('openMenu');
   if (open) {
     menu.hidden = false;
     requestAnimationFrame(() => menu.classList.add('is-open'));
@@ -274,18 +299,27 @@ if (finePointer) {
 /* ─────────────────────────────── Route (experience) ─────────────────────────────── */
 
 const wpButtons = $$('[data-wp]');
+let currentWp = 2;
 function showWaypoint(i) {
   wpButtons.forEach((b) => b.classList.toggle('is-on', Number(b.dataset.wp) === i));
-  $('#wp-year').textContent = WAYPOINTS[i][0];
-  $('#wp-text').textContent = WAYPOINTS[i][1];
+  const wp = lang === 'it' ? IT.waypoints[i] : WAYPOINTS[i];
+  currentWp = i;
+  $('#wp-year').textContent = wp[0];
+  $('#wp-text').textContent = wp[1];
+}
+function labelWaypoints() {
+  wpButtons.forEach((b) => {
+    const wp = (lang === 'it' ? IT.waypoints : WAYPOINTS)[Number(b.dataset.wp)];
+    b.setAttribute('aria-label', `${wp[0]}: ${wp[1]}`);
+  });
 }
 wpButtons.forEach((b) => {
   const i = Number(b.dataset.wp);
-  b.setAttribute('aria-label', `${WAYPOINTS[i][0]}: ${WAYPOINTS[i][1]}`);
   b.addEventListener('click', () => showWaypoint(i));
   b.addEventListener('pointerenter', () => showWaypoint(i));
   b.addEventListener('focus', () => showWaypoint(i));
 });
+labelWaypoints();
 showWaypoint(2);
 
 $$('[data-job]').forEach((job) => {
@@ -297,38 +331,54 @@ $$('[data-job]').forEach((job) => {
 
 const pack = $('#pack');
 const note = { cat: $('#skill-cat'), name: $('#skill-name'), text: $('#skill-text') };
-const items = [];
-POCKETS.forEach((pocket) => {
-  const div = document.createElement('div');
-  div.className = 'pocket';
-  div.innerHTML = `<p class="pocket__title">${pocket.title}</p><p class="pocket__hint">${pocket.hint}</p><ul class="items"></ul>`;
-  const ul = $('.items', div);
-  SKILLS.filter((s) => s.tier === pocket.tier).forEach((s, i) => {
-    const li = document.createElement('li');
-    li.className = `item${s.tier === 1 ? ' item--big' : ''}${s.focus ? ' item--focus' : ''}`;
-    li.dataset.cat = s.cat;
-    li.style.setProperty('--r', `${((i * 7) % 5) - 2}deg`); // deterministic little wobble
-    li.innerHTML = `<button type="button">${s.name}</button>`;
-    ul.appendChild(li);
-    items.push({ li, s });
+let items = [];
+let selectedSkill = null;
+let activeFilter = 'all';
+const skillName = (s) => (lang === 'it' && Array.isArray(IT.skills[s.name]) ? IT.skills[s.name][0] : s.name);
+const skillText = (s) => {
+  if (lang !== 'it') return s.text;
+  const v = IT.skills[s.name];
+  return Array.isArray(v) ? v[1] : (v || s.text);
+};
+function renderPack() {
+  pack.innerHTML = '';
+  items = [];
+  POCKETS.forEach((pocket, pi) => {
+    const copy = lang === 'it' ? IT.pockets[pi] : pocket;
+    const div = document.createElement('div');
+    div.className = 'pocket';
+    div.innerHTML = `<p class="pocket__title">${copy.title}</p><p class="pocket__hint">${copy.hint}</p><ul class="items"></ul>`;
+    const ul = $('.items', div);
+    SKILLS.filter((s) => s.tier === pocket.tier).forEach((s, i) => {
+      const li = document.createElement('li');
+      li.className = `item${s.tier === 1 ? ' item--big' : ''}${s.focus ? ' item--focus' : ''}`;
+      li.dataset.cat = s.cat;
+      li.style.setProperty('--r', `${((i * 7) % 5) - 2}deg`); // deterministic little wobble
+      li.innerHTML = `<button type="button">${skillName(s)}</button>`;
+      li.classList.toggle('is-dim', activeFilter !== 'all' && s.cat !== activeFilter);
+      ul.appendChild(li);
+      const it = { li, s };
+      ['pointerenter', 'focus', 'click'].forEach((ev) => $('button', li).addEventListener(ev, () => showSkill(it)));
+      items.push(it);
+    });
+    pack.appendChild(div);
   });
-  pack.appendChild(div);
-});
-function showSkill(it) {
-  items.forEach((x) => x.li.classList.toggle('is-sel', x === it));
-  note.cat.textContent = `${CAT_LABEL[it.s.cat]}${it.s.focus ? ' · current focus' : ''}`;
-  note.name.textContent = it.s.name;
-  note.text.textContent = it.s.text;
+  if (selectedSkill) showSkill(items.find((x) => x.s === selectedSkill));
 }
-items.forEach((it) => {
-  const b = $('button', it.li);
-  ['pointerenter', 'focus', 'click'].forEach((ev) => b.addEventListener(ev, () => showSkill(it)));
-});
+function showSkill(it) {
+  selectedSkill = it.s;
+  items.forEach((x) => x.li.classList.toggle('is-sel', x === it));
+  const cats = lang === 'it' ? IT.cat : CAT_LABEL;
+  note.cat.textContent = `${cats[it.s.cat]}${it.s.focus ? t('focus') : ''}`;
+  note.name.textContent = skillName(it.s);
+  note.text.textContent = skillText(it.s);
+}
+renderPack();
 $$('.filter').forEach((f) => {
   f.addEventListener('click', () => {
     $$('.filter').forEach((x) => { x.classList.toggle('is-on', x === f); x.setAttribute('aria-pressed', String(x === f)); });
-    const cat = f.dataset.filter;
-    items.forEach(({ li, s }) => li.classList.toggle('is-dim', cat !== 'all' && s.cat !== cat));
+    activeFilter = f.dataset.filter;
+    items.forEach(({ li, s }) => li.classList.toggle('is-dim', activeFilter !== 'all' && s.cat !== activeFilter));
   });
 });
 
@@ -373,7 +423,8 @@ const dialog = $('#case');
 const panel = $('.case__panel', dialog);
 let originCard = null;
 
-function fillCase(p) {
+function fillCase(p, key) {
+  if (lang === 'it') p = { ...p, ...IT.projects[key] };
   panel.style.setProperty('--case-c', p.color);
   $('#case-index').textContent = p.index;
   $('#case-title').textContent = p.title;
@@ -399,7 +450,7 @@ function flipFrom(card) {
 }
 function openCase(key, card) {
   originCard = card;
-  fillCase(PROJECTS[key]);
+  fillCase(PROJECTS[key], key);
   $('.case__scroll', dialog).scrollTop = 0;
   if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', '');
   document.body.classList.add('has-modal');
@@ -451,10 +502,10 @@ $$('[data-count]').forEach((el) => {
 $$('[data-copy]').forEach((btn) => {
   btn.addEventListener('click', async () => {
     const label = $('.copy__label', btn);
-    try { await navigator.clipboard.writeText(btn.dataset.copy); label.textContent = 'copied ✓'; }
+    try { await navigator.clipboard.writeText(btn.dataset.copy); label.textContent = t('copied'); }
     catch { label.textContent = btn.dataset.copy; }
     btn.classList.add('is-done');
-    setTimeout(() => { label.textContent = 'copy email'; btn.classList.remove('is-done'); }, 2200);
+    setTimeout(() => { label.textContent = t('copy'); btn.classList.remove('is-done'); }, 2200);
   });
 });
 
@@ -482,3 +533,17 @@ async function bootScene() {
 }
 if ('requestIdleCallback' in window) requestIdleCallback(bootScene, { timeout: 500 });
 else setTimeout(bootScene, 150);
+
+/* ─────────────────────────────── Language switch ─────────────────────────────── */
+
+function setLang(next) {
+  lang = next;
+  try { localStorage.setItem('lang', lang); } catch { /* ignore */ }
+  applyStatic();
+  renderPack();
+  labelWaypoints();
+  showWaypoint(currentWp);
+  $$('.copy__label').forEach((l) => { l.textContent = t('copy'); });
+}
+$$('[data-lang]').forEach((b) => b.addEventListener('click', () => { if (b.dataset.lang !== lang) setLang(b.dataset.lang); }));
+if (lang === 'it') setLang('it'); else applyStatic();

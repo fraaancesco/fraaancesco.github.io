@@ -123,6 +123,10 @@ main { position: relative; z-index: 3; }
 .nav__links .nav__summit { color: var(--ink); background: var(--lime); font-weight: 700; }
 .nav__links .nav__summit:hover { background: var(--cream); color: var(--ink); }
 
+.lang { display: inline-flex; gap: 2px; padding: 3px; margin-left: 8px; border-radius: 99px; background: rgba(255, 241, 220, .1); }
+.lang button { min-width: 40px; min-height: 36px; padding: 0 10px; border-radius: 99px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; color: var(--muted); transition: background .2s, color .2s; }
+.lang button:hover { color: var(--cream); }
+.lang button[aria-pressed="true"] { background: var(--cream); color: var(--ink); }
 .nav__toggle { display: none; width: 48px; height: 48px; margin-left: auto; border-radius: 50%; background: var(--lime); position: relative; z-index: 60; }
 .nav__toggle-bars, .nav__toggle-bars::before {
   position: absolute; left: 14px; right: 14px; height: 2px; border-radius: 2px; background: var(--ink);
@@ -525,7 +529,8 @@ body.has-modal { overflow: hidden; }
   .nav.is-compact .nav__inner { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(11, 29, 38, .94); }
   .grain { display: none; }
   .nav__links { display: none; }
-  .nav__toggle { display: block; }
+  .nav__toggle { display: block; margin-left: 10px; }
+  .lang { margin-left: auto; }
   .nav__inner { padding: 6px 6px 6px 16px; }
   .about { grid-template-columns: 1fr; }
   .stickers { justify-content: flex-start; }

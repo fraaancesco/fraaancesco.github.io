@@ -5,6 +5,7 @@ Aggiungi una riga ogni volta che cambi qualcosa di visibile.
 
 ## 2026-10
 
+- **Topbar mobile**: sotto i 360px il pulsante del menu spariva (schiacciato dal logo) e a 375px logo e burger erano deformati; ora logo, EN/IT e burger hanno dimensioni fisse e la barra è più compatta sotto i 420px.
 - **Responsive**: titolo hero che non esce più dallo schermo sui telefoni piccoli; sottolineature ondulate dei titoli che non toccano più il testo sotto; padding mobile delle sezioni finalmente applicato (un selettore CSS rotto lo annullava); poster in evidenza orizzontale sui tablet; menu a burger fino a 1180px (la barra non si accavalla più sui tablet); menu scorrevole e niente scroll-stack con il telefono in orizzontale; effetti hover solo su dispositivi con mouse (niente stati "bloccati" dopo un tap); ritocchi sotto i 380px.
 - **Performance**: 3D e cielo dimensionati sul viewport grande, quindi la barra degli indirizzi su mobile non ridimensiona più il canvas WebGL; scroll-stack aggiornato una volta per frame senza layout thrashing; cielo aggiornato solo quando i colori cambiano; canvas delle scintille allocato solo al primo click.
 - **About**: nuovo sticker "codes in Java & Go" / "scrivo in Java & Go".

@@ -3,6 +3,8 @@
 Personal portfolio of **Francesco Pistorio** — Backend Engineer & cybersecurity enthusiast.
 Live at <https://fraaancesco.github.io>.
 
+**Docs (IT):** [style guide](docs/STYLE.md) · [how to add content](docs/CONTENT.md) · [changelog](CHANGELOG.md)
+
 ## Stack
 
 - Hand-written HTML + CSS + vanilla JS (no framework, no runtime dependencies)

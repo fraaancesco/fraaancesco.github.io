@@ -1,0 +1,9 @@
+# GitHub Pages: publish only the site, not the project docs and sources
+exclude:
+  - docs/
+  - src/
+  - CLAUDE.md
+  - CHANGELOG.md
+  - README.md
+  - package.json
+  - package-lock.json

@@ -33,6 +33,7 @@ export const IT = {
     'about.s3': '<span class="mono">adesso</span>a fondo su Go &amp; sicurezza',
     'about.s4': '<span class="mono">tempo libero</span>pittura · trekking · film horror',
     'about.s5': '<span class="mono">parlo</span>Italiano (madrelingua) · Inglese (professionale)',
+    'about.s6': '<span class="mono">scrivo in</span>Java &amp; Go',
 
     'exp.title': 'Il percorso <span class="hl hl--cyan">finora</span>',
     'exp.sub': 'La mia strada, disegnata come un profilo altimetrico. Tocca un punto.',

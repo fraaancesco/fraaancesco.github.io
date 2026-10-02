@@ -5,6 +5,7 @@ Aggiungi una riga ogni volta che cambi qualcosa di visibile.
 
 ## 2026-10
 
+- **About**: nuovo sticker "codes in Java & Go" / "scrivo in Java & Go".
 - **GitHub dal vivo**: le card dei progetti mostrano ultimo aggiornamento e linguaggi letti dalle API pubbliche di GitHub a ogni caricamento della pagina (nascosti se GitHub non risponde).
 - **Click Spark**: scintille color lava a ogni click/tap (canvas attivo solo durante l'animazione; disattivato con riduzione animazioni).
 - **Animazioni** (ispirate a Vue Bits, in vanilla): titoli Split Text, riflesso Shiny Text su "Start the climb", Scroll Stack per Stimoli al posto della griglia di polaroid.

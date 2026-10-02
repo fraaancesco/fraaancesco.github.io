@@ -32,3 +32,13 @@ npm run serve   # http://localhost:8080
 
 Content (skills, project case studies) lives in the `SKILLS` and `PROJECTS` objects at the top of `js/main.js`;
 their Italian versions, and every translated string in the page (`data-i18n` keys), are in `js/i18n.js`.
+
+## Sparks / Stimoli (hobbies — work in progress)
+
+The "Sparks" section (Italian: "Stimoli") collects hikes, photos and paintings.
+To add something:
+
+1. put the image in `images/stimoli/` (jpg/webp, ~1200px wide);
+2. add an entry to the `STIMOLI` list in `js/stimoli.js` (the file explains every field).
+
+Categories without entries show a "coming soon" card.

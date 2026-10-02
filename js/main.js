@@ -1,6 +1,7 @@
 /* Francesco Pistorio — portfolio interactions (no dependencies). */
 
 import { IT } from './i18n.js';
+import { STIMOLI } from './stimoli.js';
 
 const root = document.documentElement;
 const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -19,6 +20,12 @@ const EN_UI = {
   openMenu: 'Open menu', closeMenu: 'Close menu', copy: 'copy email', copied: 'copied ✓', focus: ' · current focus',
   whatItChecks: 'what it checks', whatItFlags: 'what it flags',
   sev: { critical: 'critical', high: 'high', medium: 'medium', low: 'low', lowInfo: 'low / info' },
+  stim: {
+    soon: 'coming soon',
+    hiking: ['Trails', 'hikes will land here — tracks, summits, views'],
+    photo: ['Photos', 'shots from my wanderings, framed here soon'],
+    painting: ['Paintings', 'the canvases are still drying — check back soon'],
+  },
 };
 let lang = 'en';
 try { if (localStorage.getItem('lang') === 'it') lang = 'it'; } catch { /* storage unavailable */ }
@@ -217,7 +224,7 @@ const sectionObserver = new IntersectionObserver((entries) => {
     navLinks.forEach((a) => a.setAttribute('aria-current', String(a.getAttribute('href') === `#${entry.target.id}`)));
   });
 }, { rootMargin: '-45% 0px -50% 0px' });
-['about', 'experience', 'skills', 'projects', 'education', 'contact'].forEach((id) => sectionObserver.observe(document.getElementById(id)));
+['about', 'experience', 'skills', 'projects', 'education', 'stimoli', 'contact'].forEach((id) => sectionObserver.observe(document.getElementById(id)));
 
 /* ─────────────────────────────── The climb (scroll) ─────────────────────────────── */
 
@@ -534,6 +541,80 @@ async function bootScene() {
 if ('requestIdleCallback' in window) requestIdleCallback(bootScene, { timeout: 500 });
 else setTimeout(bootScene, 150);
 
+/* ─────────────────────────────── Stimoli (hobbies, work in progress) ─────────────────────────────── */
+
+const STIM_TYPES = ['hiking', 'photo', 'painting'];
+const STIM_COLOR = { hiking: 'var(--lime)', photo: 'var(--cyan)', painting: 'var(--orange)' };
+const STIM_ART = {
+  hiking: '<svg viewBox="0 0 120 90" aria-hidden="true"><path d="M4 82 38 30l16 22 18-30 44 60z" fill="currentColor" opacity=".9"/><path d="M14 80c14-6 22-14 30-12s12 8 22 4 16-14 30-10" fill="none" stroke="#0b1d26" stroke-width="3" stroke-dasharray="4 5" stroke-linecap="round"/></svg>',
+  photo: '<svg viewBox="0 0 120 90" aria-hidden="true"><rect x="14" y="22" width="92" height="58" rx="10" fill="currentColor"/><rect x="42" y="12" width="36" height="14" rx="4" fill="currentColor"/><circle cx="60" cy="51" r="18" fill="#0b1d26"/><circle cx="60" cy="51" r="9" fill="currentColor" opacity=".6"/></svg>',
+  painting: '<svg viewBox="0 0 120 90" aria-hidden="true"><path d="M10 70c18-30 30-46 52-48s36 14 30 30-26 12-34 22-28 14-48-4z" fill="currentColor"/><circle cx="46" cy="40" r="6" fill="#ff5c7a"/><circle cx="64" cy="34" r="6" fill="#3de0ff"/><circle cx="78" cy="46" r="6" fill="#ffd23f"/><path d="M96 10 70 60" stroke="#0b1d26" stroke-width="5" stroke-linecap="round"/></svg>',
+};
+const stimGrid = $('#stimoli-grid');
+let stimFilter = 'all';
+const loc = (v) => (v && typeof v === 'object' ? (v[lang] || v.en) : v || '');
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function renderStimoli() {
+  const ui = t('stim');
+  const cards = [];
+  STIM_TYPES.forEach((type) => {
+    const entries = STIMOLI.filter((e) => e.type === type);
+    if (!entries.length) cards.push({ type, placeholder: true });
+    entries.forEach((e) => cards.push({ type, e }));
+  });
+  stimGrid.innerHTML = cards.map((c, i) => {
+    const hidden = stimFilter !== 'all' && c.type !== stimFilter ? ' hidden' : '';
+    const style = `style="--c:${STIM_COLOR[c.type]};--r:${((i * 5) % 7) - 3}deg"`;
+    if (c.placeholder) {
+      const [title, note] = ui[c.type];
+      return `<li class="polaroid polaroid--soon"${hidden} ${style}>
+        <div class="polaroid__pic">${STIM_ART[c.type]}<span class="polaroid__soon mono">${ui.soon}</span></div>
+        <p class="polaroid__title">${title}</p><p class="polaroid__note hand">${note}</p></li>`;
+    }
+    const { e } = c;
+    const meta = [e.place, e.date].filter(Boolean).map(esc).join(' · ');
+    const pic = e.image
+      ? `<img src="${esc(e.image)}" alt="${esc(loc(e.title))}" loading="lazy" decoding="async">`
+      : STIM_ART[c.type];
+    return `<li class="polaroid"${hidden} ${style}>
+      <button type="button" class="polaroid__open" data-stim-open="${STIMOLI.indexOf(e)}" aria-label="${esc(loc(e.title))}"></button>
+      <div class="polaroid__pic">${pic}</div>
+      <p class="polaroid__title">${esc(loc(e.title))}</p>
+      ${e.note ? `<p class="polaroid__note hand">${esc(loc(e.note))}</p>` : ''}
+      ${meta ? `<p class="polaroid__meta mono">${meta}</p>` : ''}
+      ${e.link ? `<a class="polaroid__link mono" href="${esc(e.link)}" target="_blank" rel="noopener">↗</a>` : ''}</li>`;
+  }).join('');
+}
+$$('[data-stim]').forEach((f) => {
+  f.addEventListener('click', () => {
+    $$('[data-stim]').forEach((x) => { x.classList.toggle('is-on', x === f); x.setAttribute('aria-pressed', String(x === f)); });
+    stimFilter = f.dataset.stim;
+    renderStimoli();
+  });
+});
+
+const lightbox = $('#lightbox');
+stimGrid.addEventListener('click', (ev) => {
+  const btn = ev.target.closest('[data-stim-open]');
+  if (!btn) return;
+  const e = STIMOLI[Number(btn.dataset.stimOpen)];
+  if (!e.image) return;
+  $('#lightbox-img').src = e.image;
+  $('#lightbox-img').alt = loc(e.title);
+  $('#lightbox-cap').textContent = [loc(e.title), loc(e.note), e.place, e.date].filter(Boolean).join(' · ');
+  if (lightbox.showModal) lightbox.showModal(); else lightbox.setAttribute('open', '');
+  document.body.classList.add('has-modal');
+});
+function closeLightbox() {
+  if (lightbox.close) lightbox.close(); else lightbox.removeAttribute('open');
+  document.body.classList.remove('has-modal');
+}
+$('[data-lightbox-close]').addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+lightbox.addEventListener('close', () => document.body.classList.remove('has-modal'));
+renderStimoli();
+
 /* ─────────────────────────────── Language switch ─────────────────────────────── */
 
 function setLang(next) {
@@ -541,6 +622,7 @@ function setLang(next) {
   try { localStorage.setItem('lang', lang); } catch { /* ignore */ }
   applyStatic();
   renderPack();
+  renderStimoli();
   labelWaypoints();
   showWaypoint(currentWp);
   $$('.copy__label').forEach((l) => { l.textContent = t('copy'); });

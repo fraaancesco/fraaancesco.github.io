@@ -56,6 +56,7 @@
           <li><a href="#skills" data-i18n="nav.pack">Backpack</a></li>
           <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
           <li><a href="#education" data-i18n="nav.training">Training</a></li>
+          <li><a href="#stimoli" data-i18n="nav.stimoli">Sparks</a></li>
           <li><a href="#contact" class="nav__summit" data-i18n="nav.summit">Summit ▲</a></li>
         </ul>
       </nav>
@@ -78,6 +79,7 @@
         <li><a href="#skills" data-i18n="nav.pack">Backpack</a></li>
         <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
         <li><a href="#education" data-i18n="nav.training">Training</a></li>
+        <li><a href="#stimoli" data-i18n="nav.stimoli">Sparks</a></li>
         <li><a href="#contact" data-i18n="nav.summit">Summit ▲</a></li>
       </ol>
     </nav>
@@ -331,6 +333,28 @@
       </div>
     </section>
 
+    <!-- ───────── STIMOLI · life outside the code (work in progress) ───────── -->
+    <section class="chapter" id="stimoli" aria-labelledby="stimoli-title">
+      <div class="panel" data-reveal>
+        <div class="stimoli__head">
+          <div>
+            <h2 class="title" id="stimoli-title" data-i18n="stim.title"><span class="hl hl--lime">Sparks</span></h2>
+            <p class="sub" data-i18n="stim.sub">What keeps me curious when the laptop is closed: trails, photos, paintings. A corner that grows a little every time I come back from somewhere.</p>
+          </div>
+          <p class="wip-badge mono" data-i18n="stim.wip">work in progress</p>
+        </div>
+
+        <div class="filters" role="group" aria-label="Filter sparks">
+          <button type="button" class="filter is-on" data-stim="all" aria-pressed="true" data-i18n="stim.all">everything</button>
+          <button type="button" class="filter" data-stim="hiking" aria-pressed="false" style="--c:var(--lime)" data-i18n="stim.hiking">hiking</button>
+          <button type="button" class="filter" data-stim="photo" aria-pressed="false" style="--c:var(--cyan)" data-i18n="stim.photo">photos</button>
+          <button type="button" class="filter" data-stim="painting" aria-pressed="false" style="--c:var(--orange)" data-i18n="stim.painting">paintings</button>
+        </div>
+
+        <ul class="polaroids" id="stimoli-grid"></ul>
+      </div>
+    </section>
+
     <!-- ───────── CONTACT · the summit ───────── -->
     <section class="summit" id="contact" aria-labelledby="contact-title">
       <div class="summit__inner">
@@ -354,6 +378,15 @@
       </footer>
     </section>
   </main>
+
+  <!-- stimoli lightbox -->
+  <dialog class="lightbox" id="lightbox" aria-label="Picture">
+    <figure class="lightbox__figure">
+      <img id="lightbox-img" alt="">
+      <figcaption id="lightbox-cap"></figcaption>
+    </figure>
+    <button class="case__close" type="button" data-lightbox-close aria-label="Close"><span aria-hidden="true">×</span></button>
+  </dialog>
 
   <!-- project case study -->
   <dialog class="case" id="case" aria-labelledby="case-title">

@@ -14,6 +14,7 @@ export const IT = {
     'nav.pack': 'Zaino',
     'nav.projects': 'Progetti',
     'nav.training': 'Formazione',
+    'nav.stimoli': 'Stimoli',
     'nav.summit': 'Vetta ▲',
     'menu.note': 'psst — il vulcano è 3D in tempo reale',
 
@@ -79,6 +80,14 @@ export const IT = {
     'edu.thmwhen': '2024 → oggi',
     'edu.thm': 'Cybersecurity — in corso di studio',
 
+    'stim.title': '<span class="hl hl--lime">Stimoli</span>',
+    'stim.sub': 'Quello che mi tiene curioso quando il portatile è chiuso: sentieri, foto, dipinti. Un angolo che cresce un po\' ogni volta che torno da qualche parte.',
+    'stim.wip': 'lavori in corso',
+    'stim.all': 'tutto',
+    'stim.hiking': 'trekking',
+    'stim.photo': 'foto',
+    'stim.painting': 'dipinti',
+
     'contact.hand': 'ce l\'hai fatta, sei in cima!',
     'contact.title': 'Ora dimmi <span class="summit__hi">ciao.</span>',
     'contact.lede': 'Nuove sfide, un progetto parallelo, due chiacchiere su backend o sicurezza — la mia inbox è aperta.',
@@ -101,6 +110,12 @@ export const IT = {
     whatItChecks: 'cosa controlla',
     whatItFlags: 'cosa segnala',
     sev: { critical: 'critici', high: 'alti', medium: 'medi', low: 'bassi', lowInfo: 'bassi / info' },
+    stim: {
+      soon: 'presto qui',
+      hiking: ['Sentieri', 'le escursioni arriveranno qui — tracce, cime, panorami'],
+      photo: ['Foto', 'scatti dai miei giri, presto in questa cornice'],
+      painting: ['Dipinti', 'le tele stanno asciugando — torna a trovarmi'],
+    },
   },
 
   cat: { backend: 'back-end', lang: 'linguaggio', data: 'database', devops: 'devops', frontend: 'front-end', security: 'sicurezza' },

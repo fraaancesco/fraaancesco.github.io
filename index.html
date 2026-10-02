@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Francesco Pistorio — Backend Engineer</title>
-  <meta name="description" content="Francesco Pistorio — Backend Engineer at Fincons Group and cybersecurity enthusiast based in Catania, Italy. Java, Spring Boot, NestJS, Go.">
-  <meta name="theme-color" content="#07080a">
-  <meta property="og:title" content="Francesco Pistorio — Backend Engineer">
-  <meta property="og:description" content="I build the systems behind the screen — and lately I've been learning how to break them.">
+  <title>Francesco Pistorio — backend engineer at the foot of Etna</title>
+  <meta name="description" content="Francesco Pistorio — backend engineer by day, security nerd by night. Java, Spring Boot, NestJS, Go. Catania, Italy.">
+  <meta name="theme-color" content="#1b1035">
+  <meta property="og:title" content="Francesco Pistorio">
+  <meta property="og:description" content="Backend engineer by day, security nerd by night — writing APIs at the foot of Etna.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://fraaancesco.github.io/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2307080a'/%3E%3Cpath d='M16 4 27 10v12l-11 6-11-6V10z' fill='none' stroke='%23f3e600' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231b1035'/%3E%3Cpath d='M3 26 13 9l4 6 3-4 9 15z' fill='%23ff4fa3'/%3E%3Cpath d='m11 12 2-3 2 3' fill='none' stroke='%23ff8a3d' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Caveat:wght@600;700&family=Space+Mono:wght@400;700&display=swap">
   <link rel="stylesheet" href="css/main.css">
   <link rel="modulepreload" href="js/main.js">
   <script>document.documentElement.classList.add('js');</script>
@@ -21,37 +21,40 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- Fixed WebGL stage: one context for the whole page (hero + contact) -->
+  <!-- the world: CSS sky + one WebGL canvas with the volcano -->
+  <div class="sky" aria-hidden="true"></div>
   <div class="stage" aria-hidden="true">
     <canvas id="stage-canvas"></canvas>
-    <svg class="stage-fallback" viewBox="-100 -100 200 200">
-      <g fill="none" stroke="currentColor" stroke-width="0.6">
-        <polygon points="0,-80 69,-40 69,40 0,80 -69,40 -69,-40"/>
-        <polygon points="0,-48 42,-24 42,24 0,48 -42,24 -42,-24"/>
-        <path d="M0,-80 0,-48 M69,-40 42,-24 M69,40 42,24 M0,80 0,48 M-69,40 -42,24 M-69,-40 -42,-24 M0,-48 0,48 M-42,-24 42,24 M42,-24 -42,24"/>
-      </g>
+    <svg class="stage-fallback" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMax slice">
+      <path d="M0 400V300l140-60 120 40 160-90 120 50L600 90l40 30 40-30 140 150 120-40 140 70 120-30v160z" fill="#3b2163"/>
+      <path d="M0 400v-60l200-40 180 50 220-80 200 70 180-40 220 50v50z" fill="#24133f"/>
+      <path d="m600 90 40 30 40-30" fill="none" stroke="#ff8a3d" stroke-width="6"/>
     </svg>
   </div>
-  <div class="glow" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
+  <!-- altimeter: replaces the boring progress bar -->
+  <div class="altimeter" aria-hidden="true">
+    <div class="altimeter__track"><span class="altimeter__fill"></span><span class="altimeter__peak">▲</span></div>
+    <p class="altimeter__value mono"><span id="alt">0</span> m</p>
+  </div>
+
   <header class="nav" id="nav">
-    <div class="nav__progress" aria-hidden="true"><span></span></div>
     <div class="nav__inner">
-      <a class="nav__logo" href="#top" aria-label="Francesco Pistorio — back to top">
-        <span class="nav__logo-mark" aria-hidden="true"></span>FP<span class="blink">_</span>
+      <a class="nav__logo" href="#top" aria-label="Francesco Pistorio — back to the start">
+        <svg viewBox="0 0 32 24" aria-hidden="true"><path d="M1 23 12 4l4 6 3-4 12 17z"/></svg>
+        <span>fraaancesco</span>
       </a>
       <nav aria-label="Primary">
         <ul class="nav__links">
           <li><a href="#about">About</a></li>
-          <li><a href="#experience">Experience</a></li>
-          <li><a href="#skills">Skills</a></li>
+          <li><a href="#experience">Route</a></li>
+          <li><a href="#skills">Backpack</a></li>
           <li><a href="#projects">Projects</a></li>
-          <li><a href="#education">Education</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="#education">Training</a></li>
+          <li><a href="#contact" class="nav__summit">Summit ▲</a></li>
         </ul>
       </nav>
-      <a class="nav__cta" href="#contact">Let's talk</a>
       <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="menu">
         <span class="sr-only">Open menu</span>
         <span class="nav__toggle-bars" aria-hidden="true"></span>
@@ -62,464 +65,330 @@
   <div class="menu" id="menu" hidden>
     <nav aria-label="Mobile">
       <ol class="menu__links">
-        <li><a href="#about"><span>01</span>About</a></li>
-        <li><a href="#experience"><span>02</span>Experience</a></li>
-        <li><a href="#skills"><span>03</span>Skills</a></li>
-        <li><a href="#projects"><span>04</span>Projects</a></li>
-        <li><a href="#education"><span>05</span>Education</a></li>
-        <li><a href="#contact"><span>06</span>Contact</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Route</a></li>
+        <li><a href="#skills">Backpack</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#education">Training</a></li>
+        <li><a href="#contact">Summit ▲</a></li>
       </ol>
     </nav>
-    <p class="menu__foot mono">fraaancoisdev@gmail.com</p>
+    <p class="menu__note hand">psst — the volcano is real-time 3D</p>
   </div>
 
   <main id="main">
-    <!-- ───────────────────────── HERO ───────────────────────── -->
+    <!-- ───────── HERO · sea level ───────── -->
     <section class="hero" id="top" aria-labelledby="hero-title">
       <div class="hero__inner">
-        <p class="hero__meta mono" data-hero-item>
-          <span class="dot dot--live" aria-hidden="true"></span>
-          Catania, IT <span class="sep">/</span> 37.50°N 15.08°E
-        </p>
-
+        <p class="hero__hi hand" data-hero-item>hi, I'm</p>
         <h1 class="hero__title" id="hero-title">
           <span class="hero__line"><span class="hero__word" data-scramble>Francesco</span></span>
-          <span class="hero__line"><span class="hero__word hero__word--outline" data-scramble>Pistorio</span></span>
+          <span class="hero__line"><span class="hero__word hero__word--grad" data-scramble>Pistorio</span></span>
         </h1>
-
-        <p class="hero__role" data-hero-item>
-          <span>Backend Engineer</span>
-          <span class="hero__role-sep" aria-hidden="true">//</span>
-          <span class="accent">Cybersecurity Enthusiast</span>
-        </p>
-
         <p class="hero__lede" data-hero-item>
-          I build the systems behind the screen —<br class="br-desk"> and lately I've been learning how to break them.
+          Backend engineer by day, <mark class="hl hl--pink">security nerd</mark> by night —
+          writing APIs at the foot of a volcano.
         </p>
-
         <div class="hero__ctas" data-hero-item>
-          <a class="btn btn--primary" href="#projects" data-magnetic>
-            <span class="btn__label">Explore my work</span>
-            <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16m0 0-6-6m6 6 6-6"/></svg>
-          </a>
-          <a class="btn btn--ghost" href="#contact" data-magnetic>
-            <span class="btn__label">Get in touch</span>
-          </a>
+          <a class="btn btn--lime" href="#about" data-magnetic>Start the climb <span aria-hidden="true">↓</span></a>
+          <a class="btn btn--ghost" href="#contact" data-magnetic>Skip to the top <span aria-hidden="true">▲</span></a>
         </div>
       </div>
-
-      <div class="hero__hud mono" aria-hidden="true">
-        <span>SYS.STATUS — shipping APIs @ Fincons Group</span>
-        <span class="hero__scroll">Scroll <i></i></span>
-      </div>
+      <p class="hero__where mono" data-hero-item>
+        <span class="pin" aria-hidden="true"></span> Catania, Sicily · sea level · Etna in the background
+      </p>
+      <div class="sticker sticker--hero" data-hero-item aria-hidden="true">may be slow<br>to respond 🥝</div>
     </section>
 
-    <!-- ───────────────────────── ABOUT ───────────────────────── -->
-    <section class="section about" id="about" aria-labelledby="about-title">
-      <div class="container">
-        <header class="section__head" data-reveal>
-          <p class="eyebrow mono"><span>01</span> About</p>
-          <h2 class="section__title" id="about-title">Curious by design.<br><span class="muted">Backend by trade.</span></h2>
-        </header>
-
-        <div class="about__grid">
-          <div class="about__story">
-            <p class="about__lead" data-reveal>
-              I'm a <em>Computer Engineer</em> from Catania who has spent the last years at <em>Fincons Group</em> building
-              the parts of software most people never see — REST APIs, services and databases — while still
-              shipping the interfaces on top of them.
+    <!-- ───────── ABOUT ───────── -->
+    <section class="chapter" id="about" aria-labelledby="about-title">
+      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
+      <div class="panel panel--about" data-reveal>
+        <div class="about">
+          <div class="about__text">
+            <h2 class="title" id="about-title">Who's this <span class="hl hl--orange">guy</span>?</h2>
+            <p class="big">
+              A Computer Engineer from Catania. Since 2022 I've been at <strong>Fincons Group</strong> building
+              the stuff you don't see — REST APIs, services, databases — and, when needed, the Vue.js screens on top.
             </p>
-            <p data-reveal>
-              My fascination with security and technology started in childhood, and it never really left.
-              Today it drives what I do after hours: practising offensive security on TryHackMe and writing
-              security tooling in Go.
+            <p>
+              Security has been my thing since I was a kid. These days that curiosity finally has an outlet:
+              breaking boxes on <strong>TryHackMe</strong> and writing little security tools in <strong>Go</strong>.
             </p>
-            <p data-reveal>
-              I care about communication, teamwork, autonomy and solving problems properly — and I'm happiest
-              when a new challenge forces me to learn something I didn't know yesterday.
+            <p>
+              Away from the keyboard you'll find me painting, out on a hiking trail, or watching a thriller
+              or a horror movie with the lights off.
             </p>
+            <p class="hand about__note">good at: talking to humans, teamwork, working solo, untangling problems ✓</p>
           </div>
 
-          <dl class="dossier" data-reveal>
-            <div class="dossier__row">
-              <dt class="mono">Based in</dt>
-              <dd>Catania, Italy</dd>
-            </div>
-            <div class="dossier__row">
-              <dt class="mono">Experience</dt>
-              <dd>Software Engineer at Fincons Group <span class="muted">since April 2022</span></dd>
-            </div>
-            <div class="dossier__row">
-              <dt class="mono">Focus</dt>
-              <dd>Backend — Java / Spring Boot, Node.js / NestJS</dd>
-            </div>
-            <div class="dossier__row dossier__row--accent">
-              <dt class="mono">Currently</dt>
-              <dd>Going deeper into Go &amp; cybersecurity</dd>
-            </div>
-            <div class="dossier__row">
-              <dt class="mono">Off-duty</dt>
-              <dd>Painting, hiking, a good thriller or horror film</dd>
-            </div>
-            <div class="dossier__row">
-              <dt class="mono">Speaks</dt>
-              <dd>Italian <span class="muted">(native)</span> · English <span class="muted">(professional)</span></dd>
-            </div>
-          </dl>
+          <ul class="stickers" aria-label="Quick facts">
+            <li class="sticker sticker--lime" style="--r:-4deg"><span class="mono">based in</span>Catania, IT</li>
+            <li class="sticker sticker--pink" style="--r:3deg"><span class="mono">day job</span>Software Engineer @ Fincons</li>
+            <li class="sticker sticker--cyan" style="--r:-2deg"><span class="mono">currently</span>deep into Go &amp; security</li>
+            <li class="sticker sticker--orange" style="--r:5deg"><span class="mono">off-duty</span>🎨 painting · 🥾 hiking · 🔪 horror</li>
+            <li class="sticker sticker--cream" style="--r:-3deg"><span class="mono">speaks</span>Italian (native) · English (pro)</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- ───────────────────────── EXPERIENCE ───────────────────────── -->
-    <section class="section experience" id="experience" aria-labelledby="exp-title">
-      <div class="container">
-        <header class="section__head" data-reveal>
-          <p class="eyebrow mono"><span>02</span> Experience</p>
-          <h2 class="section__title" id="exp-title">The trajectory.</h2>
-        </header>
+    <!-- ───────── EXPERIENCE ───────── -->
+    <section class="chapter" id="experience" aria-labelledby="exp-title">
+      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
+      <div class="panel" data-reveal>
+        <h2 class="title" id="exp-title">The route <span class="hl hl--cyan">so far</span></h2>
+        <p class="sub">My path, drawn as an elevation profile. Tap a waypoint.</p>
 
-        <!-- Year track: the whole path at a glance -->
-        <div class="track" data-reveal>
-          <div class="track__rail" aria-hidden="true"><span class="track__fill"></span></div>
-          <ol class="track__stops">
-            <li class="track__stop" style="--at:0"><span class="track__year mono">2012</span><span class="track__label">Technical high school — IT</span></li>
-            <li class="track__stop" style="--at:.357"><span class="track__year mono">2017</span><span class="track__label">Computer Engineering — UniCT</span></li>
-            <li class="track__stop track__stop--key" style="--at:.714"><span class="track__year mono">2022</span><span class="track__label">Software Engineer — Fincons</span></li>
-            <li class="track__stop track__stop--above" style="--at:.857"><span class="track__year mono">2024</span><span class="track__label">TryHackMe — offensive security</span></li>
-            <li class="track__stop track__stop--now" style="--at:1"><span class="track__year mono">Now</span><span class="track__label">Go &amp; security tooling</span></li>
+        <div class="profile" id="profile">
+          <svg class="profile__svg" viewBox="0 0 1000 240" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="pf" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#ff4fa3" stop-opacity=".55"/>
+                <stop offset="1" stop-color="#ff4fa3" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="ps" x1="0" x2="1">
+                <stop offset="0" stop-color="#3de0ff"/>
+                <stop offset=".6" stop-color="#ff4fa3"/>
+                <stop offset="1" stop-color="#ff8a3d"/>
+              </linearGradient>
+            </defs>
+            <path class="profile__fill" d="M0 240V214L40 210 110 198 160 204 230 186 300 178 340 170 400 176 470 150 530 140 590 146 650 112 714 96 760 104 800 82 857 70 900 74 940 54 1000 40V240Z" fill="url(#pf)"/>
+            <path class="profile__line" d="M0 214L40 210 110 198 160 204 230 186 300 178 340 170 400 176 470 150 530 140 590 146 650 112 714 96 760 104 800 82 857 70 900 74 940 54 1000 40" fill="none" stroke="url(#ps)" stroke-width="3" vector-effect="non-scaling-stroke"/>
+          </svg>
+          <ol class="profile__points">
+            <li style="--x:2.9%;--y:87.5%"><button type="button" data-wp="0"><span class="mono">2012</span></button></li>
+            <li style="--x:30%;--y:74%"><button type="button" data-wp="1"><span class="mono">2017</span></button></li>
+            <li style="--x:71.4%;--y:40%"><button type="button" data-wp="2" class="is-key"><span class="mono">2022</span></button></li>
+            <li style="--x:85.7%;--y:29%"><button type="button" data-wp="3"><span class="mono">2024</span></button></li>
+            <li style="--x:99%;--y:16.6%"><button type="button" data-wp="4" class="is-now"><span class="mono">now</span></button></li>
           </ol>
+          <p class="profile__caption" aria-live="polite"><span class="mono" id="wp-year">2022</span> <span id="wp-text">Joined Fincons Group as a Software Engineer — and wrapped up the degree in October.</span></p>
         </div>
 
-        <div class="timeline">
-          <article class="job" data-job data-reveal>
-            <div class="job__card">
-              <button class="job__head" type="button" aria-expanded="true" aria-controls="job-fincons">
-                <span class="job__period mono">Apr 2022 — Present</span>
-                <span class="job__role">Software Engineer</span>
-                <span class="job__org">Fincons Group <span class="muted">· Catania</span></span>
-                <span class="job__summary">Full-stack engineering with a backend centre of gravity: APIs, services, data and the UIs on top.</span>
-                <span class="job__more mono" aria-hidden="true"><i></i>Details</span>
-              </button>
-              <div class="job__body" id="job-fincons">
-                <div class="job__body-inner">
-                  <ul class="modules">
-                    <li class="module">
-                      <span class="module__tag mono">Backend · Java</span>
-                      <p>Scalable, high-performance REST APIs built with <strong>Spring Boot</strong>.</p>
-                    </li>
-                    <li class="module">
-                      <span class="module__tag mono">Backend · Node</span>
-                      <p>RESTful services in <strong>TypeScript</strong> with the <strong>NestJS</strong> framework.</p>
-                    </li>
-                    <li class="module">
-                      <span class="module__tag mono">Data</span>
-                      <p>Database management with <strong>PostgreSQL</strong> and <strong>MongoDB</strong>.</p>
-                    </li>
-                    <li class="module">
-                      <span class="module__tag mono">Frontend</span>
-                      <p>Modern, responsive user interfaces with <strong>Vue.js</strong>.</p>
-                    </li>
-                    <li class="module">
-                      <span class="module__tag mono">Collaboration</span>
-                      <p>Daily <strong>Git</strong> for versioning and teamwork; code reviews and debugging.</p>
-                    </li>
-                    <li class="module">
-                      <span class="module__tag mono">Process</span>
-                      <p>Continuous improvement of the team's development processes.</p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+        <div class="jobs">
+          <article class="job job--pink" data-job>
+            <button class="job__head" type="button" aria-expanded="true" aria-controls="job-fincons">
+              <span class="job__when mono">Apr 2022 → now · Catania</span>
+              <span class="job__role">Software Engineer</span>
+              <span class="job__org">@ Fincons Group</span>
+              <span class="job__tldr hand">full-stack on paper, backend at heart</span>
+              <span class="job__plus" aria-hidden="true"></span>
+            </button>
+            <div class="job__body" id="job-fincons">
+              <ul class="job__list">
+                <li><b>Spring Boot</b> — scalable, high-performance REST APIs in Java</li>
+                <li><b>NestJS + TypeScript</b> — RESTful services on Node.js</li>
+                <li><b>PostgreSQL &amp; MongoDB</b> — looking after the data</li>
+                <li><b>Vue.js</b> — modern, responsive interfaces when the front needs me</li>
+                <li><b>Git, every day</b> — versioning, teamwork, code reviews and debugging</li>
+                <li><b>Process</b> — making the way we build software a bit better each time</li>
+              </ul>
             </div>
           </article>
 
-          <article class="job" data-job data-reveal>
-            <div class="job__card">
-              <button class="job__head" type="button" aria-expanded="false" aria-controls="job-thm">
-                <span class="job__period mono">2024 — Present <span class="job__badge">Extracurricular</span></span>
-                <span class="job__role">Active Learner</span>
-                <span class="job__org">TryHackMe <span class="muted">· Online</span></span>
-                <span class="job__summary">Hands-on offensive security practice — learning to think like the attacker.</span>
-                <span class="job__more mono" aria-hidden="true"><i></i>Details</span>
-              </button>
-              <div class="job__body" id="job-thm">
-                <div class="job__body-inner">
-                  <ul class="modules">
-                    <li class="module">
-                      <span class="module__tag mono">Practice</span>
-                      <p>Penetration testing, web exploitation and privilege-escalation techniques.</p>
-                    </li>
-                    <li class="module">
-                      <span class="module__tag mono">Rooms completed</span>
-                      <p><strong>OWASP Top 10</strong>, <strong>Linux fundamentals</strong>, <strong>network scanning</strong>.</p>
-                    </li>
-                    <li class="module module--link">
-                      <span class="module__tag mono">Profile</span>
-                      <p><a class="link" href="https://www.tryhackme.com/p/fraaancois" target="_blank" rel="noopener">tryhackme.com/p/fraaancois <span aria-hidden="true">↗</span></a></p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+          <article class="job job--cyan" data-job>
+            <button class="job__head" type="button" aria-expanded="false" aria-controls="job-thm">
+              <span class="job__when mono">2024 → now · online · extracurricular</span>
+              <span class="job__role">Active Learner</span>
+              <span class="job__org">@ TryHackMe</span>
+              <span class="job__tldr hand">learning to think like the attacker</span>
+              <span class="job__plus" aria-hidden="true"></span>
+            </button>
+            <div class="job__body" id="job-thm">
+              <ul class="job__list">
+                <li><b>Practice</b> — penetration testing, web exploitation, privilege escalation</li>
+                <li><b>Rooms done</b> — OWASP Top 10, Linux fundamentals, network scanning</li>
+                <li><b>Profile</b> — <a href="https://www.tryhackme.com/p/fraaancois" target="_blank" rel="noopener">tryhackme.com/p/fraaancois ↗</a></li>
+              </ul>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ───────────────────────── SKILLS ───────────────────────── -->
-    <section class="section skills" id="skills" aria-labelledby="skills-title">
-      <div class="container">
-        <header class="section__head section__head--split" data-reveal>
-          <div>
-            <p class="eyebrow mono"><span>03</span> Skills</p>
-            <h2 class="section__title" id="skills-title">The stack,<br><span class="muted">in orbit.</span></h2>
-          </div>
-          <p class="section__note">Closer to the core means more present in my day-to-day work.
-            <span class="accent">Highlighted</span> is where I'm heading next. Hover or tap a node.</p>
-        </header>
+    <!-- ───────── SKILLS ───────── -->
+    <section class="chapter" id="skills" aria-labelledby="skills-title">
+      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
+      <div class="panel" data-reveal>
+        <h2 class="title" id="skills-title">What's in the <span class="hl hl--lime">backpack</span></h2>
+        <p class="sub">Everything I carry up the mountain, sorted by how often I reach for it. Hover or tap anything.</p>
 
-        <div class="orbit-ui" data-reveal>
-          <div class="orbit-filters" role="group" aria-label="Filter skills by category">
-            <button type="button" class="chip is-active" data-filter="all" aria-pressed="true">All</button>
-            <button type="button" class="chip" data-filter="backend" aria-pressed="false">Back-end</button>
-            <button type="button" class="chip" data-filter="lang" aria-pressed="false">Languages</button>
-            <button type="button" class="chip" data-filter="data" aria-pressed="false">Data</button>
-            <button type="button" class="chip" data-filter="devops" aria-pressed="false">DevOps</button>
-            <button type="button" class="chip" data-filter="frontend" aria-pressed="false">Front-end</button>
-            <button type="button" class="chip" data-filter="security" aria-pressed="false">Security</button>
-          </div>
+        <div class="filters" role="group" aria-label="Filter by category">
+          <button type="button" class="filter is-on" data-filter="all" aria-pressed="true">everything</button>
+          <button type="button" class="filter" data-filter="backend" aria-pressed="false" style="--c:var(--pink)">back-end</button>
+          <button type="button" class="filter" data-filter="lang" aria-pressed="false" style="--c:var(--cream)">languages</button>
+          <button type="button" class="filter" data-filter="data" aria-pressed="false" style="--c:var(--cyan)">data</button>
+          <button type="button" class="filter" data-filter="devops" aria-pressed="false" style="--c:var(--violet)">devops</button>
+          <button type="button" class="filter" data-filter="frontend" aria-pressed="false" style="--c:var(--lime)">front-end</button>
+          <button type="button" class="filter" data-filter="security" aria-pressed="false" style="--c:var(--orange)">security</button>
+        </div>
 
-          <div class="orbit-wrap">
-            <div class="orbit" id="orbit">
-              <div class="orbit__rings" aria-hidden="true"><i></i><i></i><i></i></div>
-              <div class="orbit__core" aria-hidden="true"><span>FP</span></div>
-              <ul class="orbit__nodes" id="orbit-nodes" aria-label="Skills"></ul>
-            </div>
-
-            <aside class="orbit-info" aria-live="polite">
-              <p class="orbit-info__cat mono" id="skill-cat">Select a skill</p>
-              <p class="orbit-info__name" id="skill-name">—</p>
-              <p class="orbit-info__text" id="skill-text">Each node maps to where the skill shows up in my work and projects.</p>
-            </aside>
-          </div>
+        <div class="pack">
+          <div class="pack__cols" id="pack"></div>
+          <aside class="pack__note" aria-live="polite">
+            <p class="pack__cat mono" id="skill-cat">pick something</p>
+            <p class="pack__name" id="skill-name">↖</p>
+            <p class="pack__text" id="skill-text">Each item says where it actually shows up in my work.</p>
+          </aside>
+        </div>
+      </div>
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+          <span>Java</span><i>✦</i><span>Spring Boot</span><i>✦</i><span>NestJS</span><i>✦</i><span>Go</span><i>✦</i><span>PostgreSQL</span><i>✦</i><span>MongoDB</span><i>✦</i><span>Docker</span><i>✦</i><span>Vue.js</span><i>✦</i><span>Linux</span><i>✦</i>
+          <span>Java</span><i>✦</i><span>Spring Boot</span><i>✦</i><span>NestJS</span><i>✦</i><span>Go</span><i>✦</i><span>PostgreSQL</span><i>✦</i><span>MongoDB</span><i>✦</i><span>Docker</span><i>✦</i><span>Vue.js</span><i>✦</i><span>Linux</span><i>✦</i>
         </div>
       </div>
     </section>
 
-    <!-- ───────────────────────── PROJECTS ───────────────────────── -->
-    <section class="section projects" id="projects" aria-labelledby="projects-title">
-      <div class="container">
-        <header class="section__head section__head--split" data-reveal>
-          <div>
-            <p class="eyebrow mono"><span>04</span> Projects</p>
-            <h2 class="section__title" id="projects-title">Selected work.</h2>
+    <!-- ───────── PROJECTS ───────── -->
+    <section class="chapter" id="projects" aria-labelledby="projects-title">
+      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
+      <div class="panel panel--bare" data-reveal>
+        <h2 class="title" id="projects-title">Stuff I built <span class="hl hl--pink">along the way</span></h2>
+        <p class="sub">Two Go security tools and one gloriously messy game. Open any of them.</p>
+      </div>
+
+      <div class="posters">
+        <article class="poster poster--lime" data-reveal>
+          <div class="poster__art" aria-hidden="true">
+            <div class="viz-headers"><div class="viz-headers__grid"></div></div>
           </div>
-          <p class="section__note">Open-source tools and experiments. Open a case study for the full story.</p>
-        </header>
+          <div class="poster__body">
+            <p class="poster__kicker mono">01 · Go · open source</p>
+            <h3 class="poster__title">HTTP Header Security Scanner</h3>
+            <p>Point it at some URLs, it tells you which security headers are missing or wrong — and how bad that is.</p>
+            <ul class="tags"><li>Go</li><li>Gin</li><li>Swagger</li><li>Docker</li></ul>
+            <button class="poster__open" type="button" data-open="scanner">open the case study <span aria-hidden="true">→</span></button>
+          </div>
+        </article>
 
-        <div class="cards">
-          <!-- 01 -->
-          <article class="card card--wide" data-project="scanner" data-reveal>
-            <div class="card__visual" aria-hidden="true">
-              <div class="viz-headers">
-                <div class="viz-headers__grid"></div>
-                <div class="viz-headers__legend mono">
-                  <span class="sev sev--crit">2 critical</span><span class="sev sev--high">5 high</span><span class="sev sev--med">4 medium</span><span class="sev sev--low">13 low</span>
-                </div>
-              </div>
+        <article class="poster poster--pink" data-reveal>
+          <div class="poster__art" aria-hidden="true">
+            <div class="viz-jwt mono">
+              <p><span class="j-h">eyJhbGciOiJub25l</span>.<span class="j-p">eyJzdWIiOiIxMjM</span>.<span class="j-s">∅</span></p>
+              <ul><li>ALG_NONE</li><li>EMPTY_SIGNATURE</li><li>NO_EXPIRATION</li></ul>
             </div>
-            <div class="card__body">
-              <p class="card__index mono">01 — Go · Security tooling</p>
-              <h3 class="card__title">HTTP Header Security Scanner</h3>
-              <p class="card__desc">A Go API that scans URLs and flags missing or misconfigured HTTP security headers — with severity and a fix for each.</p>
-              <ul class="tags"><li>Go</li><li>Gin</li><li>Swagger</li><li>Docker</li></ul>
-              <button class="card__open" type="button" data-open="scanner">
-                <span>Open case study</span><span class="card__open-icon" aria-hidden="true">+</span>
-              </button>
-            </div>
-          </article>
+          </div>
+          <div class="poster__body">
+            <p class="poster__kicker mono">02 · Go · AppSec</p>
+            <h3 class="poster__title">JWT Token Analyzer</h3>
+            <p>Feed it a JWT, it decodes it and calls out everything sketchy: <code>alg: none</code>, no expiry, embedded keys…</p>
+            <ul class="tags"><li>Go</li><li>Gin</li><li>Swagger</li><li>Docker Compose</li></ul>
+            <button class="poster__open" type="button" data-open="jwt">open the case study <span aria-hidden="true">→</span></button>
+          </div>
+        </article>
 
-          <!-- 02 -->
-          <article class="card" data-project="jwt" data-reveal>
-            <div class="card__visual" aria-hidden="true">
-              <div class="viz-jwt mono">
-                <p class="viz-jwt__token"><span class="j-h">eyJhbGciOiJub25l</span>.<span class="j-p">eyJzdWIiOiIxMjM</span>.<span class="j-s">∅</span></p>
-                <ul class="viz-jwt__flags">
-                  <li class="sev sev--crit">ALG_NONE</li>
-                  <li class="sev sev--crit">EMPTY_SIGNATURE</li>
-                  <li class="sev sev--high">NO_EXPIRATION</li>
-                  <li class="sev sev--med">NO_AUDIENCE</li>
-                </ul>
-              </div>
-            </div>
-            <div class="card__body">
-              <p class="card__index mono">02 — Go · AppSec</p>
-              <h3 class="card__title">JWT Token Analyzer</h3>
-              <p class="card__desc">A REST service that decodes JWTs, inspects their claims and reports security flaws and best-practice violations.</p>
-              <ul class="tags"><li>Go</li><li>Gin</li><li>Swagger</li><li>Docker Compose</li></ul>
-              <button class="card__open" type="button" data-open="jwt">
-                <span>Open case study</span><span class="card__open-icon" aria-hidden="true">+</span>
-              </button>
-            </div>
-          </article>
-
-          <!-- 03 -->
-          <article class="card" data-project="fugo" data-reveal>
-            <div class="card__visual" aria-hidden="true">
-              <div class="viz-fugo">
-                <svg viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice">
-                  <path class="viz-fugo__spaghetti" d="M10 120 C 60 10, 90 150, 130 70 S 190 20, 200 100 S 260 150, 240 60 S 300 10, 310 90"/>
-                  <path class="viz-fugo__spaghetti viz-fugo__spaghetti--2" d="M10 60 C 50 140, 110 20, 150 110 S 230 150, 220 40 S 290 120, 310 40"/>
-                </svg>
-                <span class="viz-fugo__label mono">class GameManager : Singleton</span>
-              </div>
-            </div>
-            <div class="card__body">
-              <p class="card__index mono">03 — Unity · University</p>
-              <h3 class="card__title">FUGO PUGO</h3>
-              <p class="card__desc">A video game built in Unity with a university colleague — design patterns, version control and an honest amount of spaghetti.</p>
-              <ul class="tags"><li>Unity</li><li>Design patterns</li><li>Git</li></ul>
-              <button class="card__open" type="button" data-open="fugo">
-                <span>Open case study</span><span class="card__open-icon" aria-hidden="true">+</span>
-              </button>
-            </div>
-          </article>
-        </div>
+        <article class="poster poster--orange" data-reveal>
+          <div class="poster__art" aria-hidden="true">
+            <svg class="viz-fugo" viewBox="0 0 320 170" preserveAspectRatio="xMidYMid slice">
+              <path d="M10 120C60 10 90 150 130 70S190 20 200 100s60 50 40-40 60-50 70 30"/>
+              <path d="M10 60c40 80 100-40 140 50s80 40 70-70 70 80 90 0"/>
+              <path d="M20 150c50-60 80 10 120-40s70 40 110-20 40-60 60-30"/>
+            </svg>
+            <span class="viz-fugo__note hand">↑ actual architecture diagram*</span>
+          </div>
+          <div class="poster__body">
+            <p class="poster__kicker mono">03 · Unity · uni project</p>
+            <h3 class="poster__title">FUGO PUGO</h3>
+            <p>A video game made with a university mate. Singletons, design patterns, version control — and some honest spaghetti.</p>
+            <ul class="tags"><li>Unity</li><li>Design patterns</li><li>Git</li></ul>
+            <button class="poster__open" type="button" data-open="fugo">open the case study <span aria-hidden="true">→</span></button>
+          </div>
+        </article>
       </div>
     </section>
 
-    <!-- ───────────────────────── NUMBERS ───────────────────────── -->
-    <section class="section numbers" aria-label="Highlights">
-      <div class="container">
-        <ul class="stats">
-          <li class="stat" data-reveal>
-            <span class="stat__value"><span data-count data-since="2022-04-01">4</span>+</span>
-            <span class="stat__label">years building production software <span class="muted">— since April 2022</span></span>
-          </li>
-          <li class="stat" data-reveal>
-            <span class="stat__value"><span data-count="2">2</span></span>
-            <span class="stat__label">open-source security tools written in Go</span>
-          </li>
-          <li class="stat" data-reveal>
-            <span class="stat__value"><span data-count="48">48</span></span>
-            <span class="stat__label">automated security checks across those tools <span class="muted">— 24 headers + 24 JWT checks</span></span>
-          </li>
-          <li class="stat" data-reveal>
-            <span class="stat__value"><span data-count="4">4</span></span>
-            <span class="stat__label">programming languages <span class="muted">— Go, Java, TypeScript, JavaScript</span></span>
-          </li>
-        </ul>
-      </div>
+    <!-- ───────── NUMBERS ───────── -->
+    <section class="chapter chapter--tight" aria-label="Trail stats">
+      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
+      <ul class="signs">
+        <li class="sign sign--pink" data-reveal>
+          <span class="sign__value"><span data-count data-since="2022-04-01">4</span>+</span>
+          <span class="sign__label">years shipping real software <em>since April 2022</em></span>
+        </li>
+        <li class="sign sign--lime" data-reveal>
+          <span class="sign__value" data-count="2">2</span>
+          <span class="sign__label">open-source security tools <em>written in Go</em></span>
+        </li>
+        <li class="sign sign--cyan" data-reveal>
+          <span class="sign__value" data-count="48">48</span>
+          <span class="sign__label">automated security checks <em>24 headers + 24 JWT checks</em></span>
+        </li>
+        <li class="sign sign--orange" data-reveal>
+          <span class="sign__value" data-count="4">4</span>
+          <span class="sign__label">programming languages <em>Go · Java · TypeScript · JavaScript</em></span>
+        </li>
+      </ul>
     </section>
 
-    <!-- ───────────────────────── EDUCATION ───────────────────────── -->
-    <section class="section education" id="education" aria-labelledby="edu-title">
-      <div class="container">
-        <header class="section__head" data-reveal>
-          <p class="eyebrow mono"><span>05</span> Education</p>
-          <h2 class="section__title" id="edu-title">Foundations.</h2>
-        </header>
-
+    <!-- ───────── EDUCATION ───────── -->
+    <section class="chapter" id="education" aria-labelledby="edu-title">
+      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
+      <div class="panel panel--narrow" data-reveal>
+        <h2 class="title" id="edu-title">Training <span class="hl hl--cyan">camp</span></h2>
         <ol class="edu">
-          <li class="edu__item" data-reveal>
-            <span class="edu__period mono">2017 — 2022</span>
-            <div>
-              <h3 class="edu__title">B.S. in Computer Engineering</h3>
-              <p class="edu__org">Università di Catania</p>
-            </div>
-            <span class="edu__place mono">Catania, IT</span>
+          <li>
+            <span class="edu__when mono">2017 → 2022</span>
+            <h3>B.S. in Computer Engineering</h3>
+            <p>Università di Catania</p>
           </li>
-          <li class="edu__item" data-reveal>
-            <span class="edu__period mono">2012 — 2017</span>
-            <div>
-              <h3 class="edu__title">Technical High School Diploma — Computer Science</h3>
-              <p class="edu__org">ITI Guglielmo Marconi</p>
-            </div>
-            <span class="edu__place mono">Catania, IT</span>
+          <li>
+            <span class="edu__when mono">2012 → 2017</span>
+            <h3>Technical diploma in Computer Science</h3>
+            <p>ITI Guglielmo Marconi, Catania</p>
           </li>
-          <li class="edu__item" data-reveal>
-            <span class="edu__period mono">2024 — Now</span>
-            <div>
-              <h3 class="edu__title">Continuous learning — offensive security</h3>
-              <p class="edu__org">TryHackMe · OWASP Top 10, Linux fundamentals, network scanning</p>
-            </div>
-            <span class="edu__place mono">Online</span>
+          <li>
+            <span class="edu__when mono">2024 → now</span>
+            <h3>Offensive security, self-taught</h3>
+            <p>TryHackMe — OWASP Top 10, Linux fundamentals, network scanning</p>
           </li>
         </ol>
       </div>
     </section>
 
-    <!-- ───────────────────────── CONTACT ───────────────────────── -->
-    <section class="section contact" id="contact" aria-labelledby="contact-title">
-      <div class="container contact__inner">
-        <p class="eyebrow mono" data-reveal><span>06</span> Contact</p>
-        <h2 class="contact__title" id="contact-title" data-reveal>
-          Let's build something<br><span class="accent-text">solid — and secure.</span>
-        </h2>
-        <p class="contact__lede" data-reveal>Open to new challenges, collaborations and a good conversation about backend or security.</p>
-
-        <div class="contact__cta" data-reveal>
-          <a class="btn btn--primary btn--xl" href="mailto:fraaancoisdev@gmail.com" data-magnetic>
-            <span class="btn__label">fraaancoisdev@gmail.com</span>
-            <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5m0 0H8m11 0v11"/></svg>
-          </a>
-          <button class="copy mono" type="button" data-copy="fraaancoisdev@gmail.com">
-            <span class="copy__label">Copy email</span>
-          </button>
+    <!-- ───────── CONTACT · the summit ───────── -->
+    <section class="summit" id="contact" aria-labelledby="contact-title">
+      <p class="checkpoint checkpoint--summit mono" data-checkpoint aria-hidden="true"></p>
+      <div class="summit__inner">
+        <p class="hand summit__hand" data-reveal>you made it to the top!</p>
+        <h2 class="summit__title" id="contact-title" data-reveal>Now say <span class="summit__hi">hi.</span></h2>
+        <p class="summit__lede" data-reveal>New challenges, a side project, a chat about backend or security — my inbox is open.
+          <span class="muted">(I may be slow to respond. I always respond.)</span></p>
+        <div class="summit__cta" data-reveal>
+          <a class="btn btn--lime btn--xl" href="mailto:fraaancoisdev@gmail.com" data-magnetic>fraaancoisdev@gmail.com <span aria-hidden="true">↗</span></a>
+          <button class="copy mono" type="button" data-copy="fraaancoisdev@gmail.com"><span class="copy__label">copy email</span></button>
         </div>
-
         <ul class="socials" data-reveal>
-          <li><a href="https://github.com/fraaancesco" target="_blank" rel="noopener"><span class="mono">GH</span>GitHub<span aria-hidden="true">↗</span></a></li>
-          <li><a href="https://www.linkedin.com/in/fraaancesco-pistorio" target="_blank" rel="noopener"><span class="mono">IN</span>LinkedIn<span aria-hidden="true">↗</span></a></li>
-          <li><a href="https://www.tryhackme.com/p/fraaancois" target="_blank" rel="noopener"><span class="mono">THM</span>TryHackMe<span aria-hidden="true">↗</span></a></li>
+          <li><a class="social social--cream" href="https://github.com/fraaancesco" target="_blank" rel="noopener">GitHub ↗</a></li>
+          <li><a class="social social--cyan" href="https://www.linkedin.com/in/fraaancesco-pistorio" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+          <li><a class="social social--pink" href="https://www.tryhackme.com/p/fraaancois" target="_blank" rel="noopener">TryHackMe ↗</a></li>
         </ul>
       </div>
+      <footer class="footer mono">
+        <span>© <span id="year">2026</span> Francesco Pistorio</span>
+        <span>hand-made in Catania, with a volcano watching</span>
+        <a href="#top">back to sea level ↓</a>
+      </footer>
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="container footer__inner mono">
-      <span>© <span id="year">2026</span> Francesco Pistorio</span>
-      <span>Catania, Italy</span>
-      <a href="#top">Back to top ↑</a>
-    </div>
-  </footer>
-
-  <!-- Project case study (filled from data in main.js) -->
+  <!-- project case study -->
   <dialog class="case" id="case" aria-labelledby="case-title">
     <div class="case__panel">
-      <button class="case__close" type="button" data-close aria-label="Close case study">
-        <span aria-hidden="true"></span>
-      </button>
+      <button class="case__close" type="button" data-close aria-label="Close case study"><span aria-hidden="true">×</span></button>
       <div class="case__scroll">
-        <header class="case__head">
-          <p class="case__index mono" id="case-index"></p>
-          <h2 class="case__title" id="case-title"></h2>
-          <p class="case__lede" id="case-lede"></p>
-        </header>
+        <p class="case__kicker mono" id="case-index"></p>
+        <h2 class="case__title" id="case-title"></h2>
+        <p class="case__lede" id="case-lede"></p>
         <div class="case__grid">
-          <section>
-            <h3 class="case__h mono">Problem / opportunity</h3>
-            <p id="case-problem"></p>
-          </section>
-          <section>
-            <h3 class="case__h mono">What I built</h3>
-            <ul class="case__list" id="case-built"></ul>
-          </section>
-          <section>
-            <h3 class="case__h mono">Stack</h3>
-            <ul class="tags" id="case-stack"></ul>
-          </section>
-          <section>
-            <h3 class="case__h mono">Outcome</h3>
-            <p id="case-result"></p>
-          </section>
+          <section><h3 class="case__h mono">the problem</h3><p id="case-problem"></p></section>
+          <section><h3 class="case__h mono">what I built</h3><ul class="case__list" id="case-built"></ul></section>
+          <section><h3 class="case__h mono">stack</h3><ul class="tags" id="case-stack"></ul></section>
+          <section><h3 class="case__h mono">the result</h3><p id="case-result"></p></section>
         </div>
         <div class="case__extra" id="case-extra"></div>
-        <a class="btn btn--primary" id="case-link" href="#" target="_blank" rel="noopener">
-          <span class="btn__label">View on GitHub</span>
-          <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5m0 0H8m11 0v11"/></svg>
-        </a>
+        <a class="btn btn--dark" id="case-link" href="#" target="_blank" rel="noopener">see it on GitHub ↗</a>
       </div>
     </div>
   </dialog>

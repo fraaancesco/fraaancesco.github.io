@@ -6,7 +6,7 @@ Live at <https://fraaancesco.github.io>.
 ## Stack
 
 - Hand-written HTML + CSS + vanilla JS (no framework, no runtime dependencies)
-- [Three.js](https://threejs.org) for the 3D "core", bundled and tree-shaken with esbuild into `js/scene.js`
+- [Three.js](https://threejs.org) for a procedural low-poly Etna (the page is a climb from sea level to the crater), bundled and tree-shaken with esbuild into `js/scene.js`
 - Lazy-loaded after first paint; falls back to a static SVG without WebGL
 - Respects `prefers-reduced-motion`, reduces quality on low-power devices
 

@@ -1,5 +1,5 @@
 /*
-  Etna at sunset, low-poly, with neon topographic contour lines.
+  Etna at sunset, low-poly: one volcano rising from the sea.
   The camera starts at sea level (Catania) and climbs to the crater as the
   page scrolls. Everything is procedural: no models, no textures to download.
 */
@@ -33,13 +33,10 @@ const CRATER_R = 3.6;
 function height(x, z) {
   const d = Math.hypot(x - ETNA.x, z - ETNA.z);
   // the volcano: a broad cone with a crater bitten out of the top
-  let h = 31 * Math.exp(-Math.pow(d / 27, 1.45));
+  let h = 37 * Math.exp(-Math.pow(d / 30, 1.4));
   if (d < CRATER_R) h -= Math.pow(1 - d / CRATER_R, 1.2) * 5.5;
-  // ridges and gullies on its flanks, rougher away from the summit
-  h += (fbm(x * 0.05 + 10, z * 0.05 + 3) - 0.45) * 12 * (0.3 + 0.7 * smooth(4, 30, d));
-  // mountain ranges on both sides
-  const side = smooth(28, 75, Math.abs(x)) * smooth(40, -40, z);
-  h += side * Math.max(0, fbm(x * 0.03 - 5, z * 0.03 + 8) - 0.3) * 60;
+  // gentle ridges on its flanks; the land around it stays low and calm
+  h += (fbm(x * 0.05 + 10, z * 0.05 + 3) - 0.45) * 5 * (0.4 + 0.6 * smooth(4, 30, d)) * (1 - smooth(45, 80, d) * 0.6);
   // the coast: everything in front sinks under the sea
   h -= smooth(18, 46, z) * 14;
   return h;
@@ -48,7 +45,7 @@ function height(x, z) {
 // height → colour: sea-level teal, green hills, terracotta & gold slopes, dark ash at the top
 const STOPS = [
   [-3, '#0e4a5a'], [1.5, '#13606a'], [6, '#1f7a5c'], [12, '#5f8f3e'],
-  [17, '#c8763a'], [22, '#e5553d'], [26, '#f0a03c'], [28.5, '#3a2a24'], [32, '#231a17'],
+  [18, '#c8763a'], [24, '#e5553d'], [28, '#f0a03c'], [30.5, '#3a2a24'], [32.5, '#d9d2c6'], [36, '#f7f3ec'],
 ].map(([h, c]) => [h, new Color(c)]);
 function colorAt(h, out) {
   if (h <= STOPS[0][0]) return out.copy(STOPS[0][1]);
@@ -88,22 +85,7 @@ function buildTerrain(low) {
   flat.setAttribute('color', new Float32BufferAttribute(colors, 3));
 
   const mat = new MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.92, metalness: 0.05 });
-  // neon topographic contour lines (cyan at the bottom → pink near the top)
-  const uniforms = { uC1: { value: new Color('#3de0ff') }, uC2: { value: new Color('#ffd23f') }, uGlow: { value: 0.55 } };
-  mat.onBeforeCompile = (shader) => {
-    Object.assign(shader.uniforms, uniforms);
-    shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nvarying float vH;')
-      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvH = position.y;');
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', '#include <common>\nvarying float vH;\nuniform vec3 uC1;\nuniform vec3 uC2;\nuniform float uGlow;')
-      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
-        float ch = vH / 1.8;
-        float cl = abs(fract(ch - 0.5) - 0.5) / max(fwidth(ch), 1e-4);
-        float line = (1.0 - min(cl, 1.0)) * smoothstep(-0.5, 1.5, vH);
-        totalEmissiveRadiance += mix(uC1, uC2, smoothstep(2.0, 26.0, vH)) * line * uGlow;`);
-  };
-  return { mesh: new Mesh(flat, mat), uniforms };
+  return { mesh: new Mesh(flat, mat) };
 }
 
 /* ---------- lava ----------------------------------------------------------- */
@@ -143,14 +125,14 @@ function buildSmoke(count) {
       void main() {
         vAge = aAge;
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = (60.0 + aAge * 260.0) * uScale / -mv.z;
+        gl_PointSize = (90.0 + aAge * 380.0) * uScale / -mv.z;
         gl_Position = projectionMatrix * mv;
       }`,
     fragmentShader: `
       varying float vAge; uniform vec3 uA; uniform vec3 uB;
       void main() {
         float d = length(gl_PointCoord - 0.5);
-        float a = smoothstep(0.5, 0.0, d) * smoothstep(0.0, 0.12, vAge) * (1.0 - vAge) * 0.38;
+        float a = smoothstep(0.5, 0.0, d) * smoothstep(0.0, 0.12, vAge) * (1.0 - vAge) * 0.55;
         gl_FragColor = vec4(mix(uA, uB, smoothstep(0.0, 0.6, vAge)), a);
       }`,
   });
@@ -163,6 +145,7 @@ function buildSmoke(count) {
 
 export function createScene(canvas, { low = false, reduced = () => false } = {}) {
   const renderer = new WebGLRenderer({ canvas, antialias: !low, alpha: true, powerPreference: low ? 'low-power' : 'high-performance' });
+  canvas.addEventListener('webglcontextlost', () => document.documentElement.classList.add('no-webgl'));
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, low ? 1.25 : 1.75));
   renderer.setClearColor(0x000000, 0);
 
@@ -228,20 +211,20 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
 
   /* camera path: sea → plain → flanks → crater rim ------------------------ */
   const PATH = new CatmullRomCurve3([
-    new Vector3(0, 7, 78),
-    new Vector3(-42, 14, 34),
-    new Vector3(44, 22, 4),
-    new Vector3(-38, 30, -16),
-    new Vector3(22, 42, -10),
-    new Vector3(6, 48, -12),
+    new Vector3(-4, 8, 50),
+    new Vector3(-44, 16, 26),
+    new Vector3(46, 26, 0),
+    new Vector3(-40, 36, -16),
+    new Vector3(24, 50, -10),
+    new Vector3(6, 56, -12),
   ]);
   const LOOK = new CatmullRomCurve3([
-    new Vector3(0, 16, -48),
-    new Vector3(0, 18, -48),
-    new Vector3(-2, 20, -50),
-    new Vector3(2, 22, -50),
-    new Vector3(0, 24, -50),
-    new Vector3(0, 22, -54),
+    new Vector3(0, 19, -48),
+    new Vector3(0, 21, -48),
+    new Vector3(-2, 23, -50),
+    new Vector3(2, 26, -50),
+    new Vector3(0, 28, -50),
+    new Vector3(0, 26, -54),
   ]);
 
   const state = { p: 0, cp: 0, mx: 0, my: 0, tmx: 0, tmy: 0 };
@@ -278,11 +261,11 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
     camPos.y = Math.max(camPos.y, height(camPos.x, camPos.z) + 3); // never clip into the mountain
     camera.position.copy(camPos);
     camLook.x += state.mx * 4;
+    if (width >= 720) camLook.x -= 26 * Math.pow(1 - p, 2); // hero: volcano sits right of the name
     if (width < 720) camLook.y += 26 * (1 - p); // portrait: keep the mountains low, under the headline
     camera.lookAt(camLook);
 
     starMat.opacity = 0.15 + p * 0.75;
-    terrain.uniforms.uGlow.value = 0.45 + p * 0.45;
 
     if (!still) t += dt;
     lavaLight.intensity = 120 + Math.sin(t * 2.1) * 25 + Math.sin(t * 5.3) * 10;
@@ -295,7 +278,7 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
       const a = smoke.age[i], s = smoke.seed[i];
       pos.setXYZ(i,
         ETNA.x + a * a * 46 + Math.sin(s * 30 + a * 4) * (1 + a * 5),
-        craterY + 1 + a * 30,
+        craterY + 1 + a * 38,
         ETNA.z - a * 8 + Math.cos(s * 20 + a * 3) * (1 + a * 4));
       ageAttr.setX(i, a);
     }

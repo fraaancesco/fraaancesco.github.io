@@ -10,8 +10,6 @@ const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
-const SUMMIT = 3350; // metres, roughly Etna's summit — the page is the climb
-
 /* ─────────────────────────────── Content ─────────────────────────────── */
 
 const SKILLS = [
@@ -216,7 +214,6 @@ function skyAt(p) {
 }
 
 const hero = $('.hero');
-const altEl = $('#alt');
 const scene = { api: null, p: 0 };
 let scrollQueued = false;
 
@@ -230,7 +227,6 @@ function onScroll() {
 
   root.style.setProperty('--progress', p.toFixed(4));
   nav.classList.toggle('is-compact', y > 40);
-  altEl.textContent = Math.round(p * SUMMIT).toLocaleString('en-US');
 
   const sky = skyAt(p);
   ['--sky1', '--sky2', '--sky3', '--sky4'].forEach((v, i) => root.style.setProperty(v, `rgb(${sky[i].join(',')})`));
@@ -244,22 +240,7 @@ function onScroll() {
 }
 window.addEventListener('scroll', () => { if (!scrollQueued) { scrollQueued = true; requestAnimationFrame(onScroll); } }, { passive: true });
 
-// checkpoints show the altitude you'll be at when that chapter is centred on screen
-const CHECKPOINT_LABEL = { about: 'base camp', experience: 'the route', skills: 'gear check', projects: 'the view', education: 'training camp', contact: 'summit' };
-function placeCheckpoints() {
-  const vh = window.innerHeight;
-  const max = Math.max(1, document.documentElement.scrollHeight - vh);
-  $$('[data-checkpoint]').forEach((cp) => {
-    const section = cp.parentElement;
-    const top = section.getBoundingClientRect().top + window.scrollY + cp.offsetTop;
-    const p = clamp((top - vh / 2) / max);
-    const label = CHECKPOINT_LABEL[section.id] || 'trail stats';
-    cp.textContent = `${Math.round(p * SUMMIT).toLocaleString('en-US')} m · ${label}`;
-  });
-}
-window.addEventListener('resize', () => { placeCheckpoints(); onScroll(); });
-window.addEventListener('load', placeCheckpoints);
-placeCheckpoints();
+window.addEventListener('resize', onScroll);
 onScroll();
 
 /* ─────────────────────────────── Reveal ─────────────────────────────── */
@@ -480,10 +461,7 @@ $$('[data-copy]').forEach((btn) => {
 /* ─────────────────────────────── 3D volcano ─────────────────────────────── */
 
 function webglAvailable() {
-  try {
-    const c = document.createElement('canvas');
-    return !!(window.WebGL2RenderingContext && c.getContext('webgl2'));
-  } catch { return false; }
+  try { return !!window.WebGL2RenderingContext; } catch { return false; }
 }
 function lowPower() {
   const mem = navigator.deviceMemory || 8;
@@ -492,7 +470,7 @@ function lowPower() {
   return mem <= 4 || cores <= 4 || small || navigator.connection?.saveData === true;
 }
 async function bootScene() {
-  if (!webglAvailable()) { root.classList.add('no-webgl'); return; }
+  if (!webglAvailable()) { console.warn('3D disabled: this browser has no WebGL 2'); root.classList.add('no-webgl'); return; }
   try {
     const { createScene } = await import('./scene.js');
     scene.api = createScene($('#stage-canvas'), { low: lowPower(), reduced: () => reduced });

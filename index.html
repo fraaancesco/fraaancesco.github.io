@@ -25,19 +25,23 @@
   <div class="sky" aria-hidden="true"></div>
   <div class="stage" aria-hidden="true">
     <canvas id="stage-canvas"></canvas>
-    <svg class="stage-fallback" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMax slice">
-      <path d="M0 400V300l140-60 120 40 160-90 120 50L600 90l40 30 40-30 140 150 120-40 140 70 120-30v160z" fill="#1f6b5c"/>
-      <path d="M0 400v-60l200-40 180 50 220-80 200 70 180-40 220 50v50z" fill="#10464f"/>
-      <path d="m600 90 40 30 40-30" fill="none" stroke="#ff8a3d" stroke-width="6"/>
+    <svg class="stage-fallback" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMax slice">
+      <defs>
+        <linearGradient id="fb-etna" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#f4efe6"/><stop offset=".16" stop-color="#e5553d"/><stop offset=".55" stop-color="#c8763a"/><stop offset="1" stop-color="#1f7a5c"/>
+        </linearGradient>
+        <radialGradient id="fb-smoke"><stop offset="0" stop-color="#ffd8c2" stop-opacity=".7"/><stop offset="1" stop-color="#ffd8c2" stop-opacity="0"/></radialGradient>
+      </defs>
+      <circle cx="790" cy="70" r="70" fill="url(#fb-smoke)"/><circle cx="870" cy="30" r="90" fill="url(#fb-smoke)"/>
+      <path d="M0 500V330l120-40 110 30 90-50 100 40 80-20 130 40 80 10 100-30 120 30 120-50 150 40v170z" fill="#13606a"/>
+      <path d="M380 500 700 140h120l330 360z" fill="url(#fb-etna)"/>
+      <path d="M700 140q60 18 120 0" fill="none" stroke="#ff7a2a" stroke-width="8" stroke-linecap="round"/>
+      <path d="M745 150c-10 60-60 90-70 170M780 152c15 70 5 120 40 190" fill="none" stroke="#ffb347" stroke-width="4" stroke-linecap="round"/>
+      <path d="M0 500v-70l220-30 200 40 260-40 240 50 280-30v80z" fill="#0e4a5a"/>
     </svg>
   </div>
   <div class="grain" aria-hidden="true"></div>
 
-  <!-- altimeter: replaces the boring progress bar -->
-  <div class="altimeter" aria-hidden="true">
-    <div class="altimeter__track"><span class="altimeter__fill"></span><span class="altimeter__peak">▲</span></div>
-    <p class="altimeter__value mono"><span id="alt">0</span> m</p>
-  </div>
 
   <header class="nav" id="nav">
     <div class="nav__inner">
@@ -94,14 +98,10 @@
           <a class="btn btn--ghost" href="#contact" data-magnetic>Skip to the top <span aria-hidden="true">▲</span></a>
         </div>
       </div>
-      <p class="hero__where mono" data-hero-item>
-        <span class="pin" aria-hidden="true"></span> Catania, Sicily · sea level · Etna in the background
-      </p>
     </section>
 
     <!-- ───────── ABOUT ───────── -->
     <section class="chapter" id="about" aria-labelledby="about-title">
-      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
       <div class="panel panel--about" data-reveal>
         <div class="about">
           <div class="about__text">
@@ -134,7 +134,6 @@
 
     <!-- ───────── EXPERIENCE ───────── -->
     <section class="chapter" id="experience" aria-labelledby="exp-title">
-      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
       <div class="panel" data-reveal>
         <h2 class="title" id="exp-title">The route <span class="hl hl--cyan">so far</span></h2>
         <p class="sub">My path, drawn as an elevation profile. Tap a waypoint.</p>
@@ -208,7 +207,6 @@
 
     <!-- ───────── SKILLS ───────── -->
     <section class="chapter" id="skills" aria-labelledby="skills-title">
-      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
       <div class="panel" data-reveal>
         <h2 class="title" id="skills-title">What's in the <span class="hl hl--lime">backpack</span></h2>
         <p class="sub">Everything I carry up the mountain, sorted by how often I reach for it. Hover or tap anything.</p>
@@ -236,7 +234,6 @@
 
     <!-- ───────── PROJECTS ───────── -->
     <section class="chapter" id="projects" aria-labelledby="projects-title">
-      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
       <div class="panel panel--bare" data-reveal>
         <h2 class="title" id="projects-title">Stuff I built <span class="hl hl--pink">along the way</span></h2>
         <p class="sub">Two Go security tools and one gloriously messy game. Open any of them.</p>
@@ -294,7 +291,6 @@
 
     <!-- ───────── NUMBERS ───────── -->
     <section class="chapter chapter--tight" aria-label="Trail stats">
-      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
       <ul class="signs">
         <li class="sign sign--pink" data-reveal>
           <span class="sign__value"><span data-count data-since="2022-04-01">4</span>+</span>
@@ -303,10 +299,6 @@
         <li class="sign sign--lime" data-reveal>
           <span class="sign__value" data-count="2">2</span>
           <span class="sign__label">open-source security tools <em>written in Go</em></span>
-        </li>
-        <li class="sign sign--cyan" data-reveal>
-          <span class="sign__value" data-count="48">48</span>
-          <span class="sign__label">automated security checks <em>24 headers + 24 JWT checks</em></span>
         </li>
         <li class="sign sign--orange" data-reveal>
           <span class="sign__value" data-count="4">4</span>
@@ -317,7 +309,6 @@
 
     <!-- ───────── EDUCATION ───────── -->
     <section class="chapter" id="education" aria-labelledby="edu-title">
-      <p class="checkpoint mono" data-checkpoint aria-hidden="true"></p>
       <div class="panel panel--narrow" data-reveal>
         <h2 class="title" id="edu-title">Training <span class="hl hl--cyan">camp</span></h2>
         <ol class="edu">
@@ -342,7 +333,6 @@
 
     <!-- ───────── CONTACT · the summit ───────── -->
     <section class="summit" id="contact" aria-labelledby="contact-title">
-      <p class="checkpoint checkpoint--summit mono" data-checkpoint aria-hidden="true"></p>
       <div class="summit__inner">
         <p class="hand summit__hand" data-reveal>you made it to the top!</p>
         <h2 class="summit__title" id="contact-title" data-reveal>Now say <span class="summit__hi">hi.</span></h2>

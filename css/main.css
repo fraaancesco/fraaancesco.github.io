@@ -86,7 +86,7 @@ code { font-family: var(--f-mono); font-size: .85em; padding: .1em .35em; border
 }
 .stage { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 .stage canvas { width: 100%; height: 100%; }
-.stage-fallback { display: none; position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 55vh; }
+.stage-fallback { display: none; position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 70vh; }
 .no-webgl .stage-fallback { display: block; }
 .no-webgl .stage canvas { display: none; }
 .grain {
@@ -94,25 +94,6 @@ code { font-family: var(--f-mono); font-size: .85em; padding: .1em .35em; border
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 main { position: relative; z-index: 3; }
-
-/* ---------- Altimeter ----------------------------------------------------- */
-
-.altimeter {
-  position: fixed; z-index: 40; right: 22px; top: 50%; transform: translateY(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
-}
-.altimeter__track { position: relative; width: 4px; height: 34vh; border-radius: 4px; background: rgba(255, 241, 220, .16); }
-.altimeter__fill {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 100%; border-radius: 4px;
-  background: linear-gradient(0deg, var(--cyan), var(--pink) 60%, var(--orange));
-  transform-origin: 50% 100%; transform: scaleY(var(--progress, 0));
-}
-.altimeter__peak { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--orange); }
-.altimeter__value {
-  writing-mode: vertical-rl; transform: rotate(180deg);
-  padding: 10px 6px; border-radius: 99px; background: rgba(11, 29, 38, .7);
-  color: var(--cream); font-size: 12px; font-weight: 700; white-space: nowrap;
-}
 
 /* ---------- Nav ----------------------------------------------------------- */
 
@@ -227,31 +208,16 @@ main { position: relative; z-index: 3; }
 
 .hero__lede { margin-top: clamp(20px, 3vw, 34px); max-width: 30ch; font-size: clamp(20px, 2vw, 28px); font-weight: 500; line-height: 1.3; text-shadow: 0 2px 20px rgba(11, 29, 38, .5); }
 .hero__ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: clamp(24px, 4vw, 40px); }
-.hero__where {
-  position: absolute; left: var(--gutter); bottom: 28px; display: flex; align-items: center; gap: 10px;
-  padding: 8px 14px; border-radius: 99px; background: rgba(11, 29, 38, .6); color: var(--cream); font-size: 12px;
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-}
-.pin { width: 10px; height: 10px; border-radius: 50% 50% 50% 0; background: var(--pink); transform: rotate(-45deg); }
 .js [data-hero-item] { opacity: 0; translate: 0 18px; }
 .is-loaded [data-hero-item] { opacity: 1; translate: 0 0; transition: opacity .9s var(--ease), translate .9s var(--ease); }
 .is-loaded .hero__lede { transition-delay: .4s; }
 .is-loaded .hero__ctas { transition-delay: .5s; }
-.is-loaded .hero__where { transition-delay: .7s; }
 .is-loaded 
 /* ---------- Chapters ------------------------------------------------------ */
 
 /* each chapter starts with a gap of open landscape: that's where the climb happens */
 .chapter { position: relative; padding: 46vh var(--gutter) 0; }
 .chapter--tight { padding-top: 30vh; }
-.checkpoint {
-  position: absolute; top: 20vh; left: 50%; transform: translateX(-50%);
-  width: max-content;
-  padding: 8px 16px; border-radius: 99px; background: rgba(11, 29, 38, .72); color: var(--cream);
-  font-size: 13px; font-weight: 700;
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-}
-.checkpoint::before { content: "▲ "; color: var(--orange); }
 
 .panel {
   max-width: var(--max); margin: 0 auto; padding: clamp(28px, 5vw, 72px);
@@ -482,7 +448,7 @@ body.has-modal { overflow: hidden; }
 
 /* ---------- Trail signs (numbers) ---------------------------------------- */
 
-.signs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 1000px; margin: 0 auto; }
+.signs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 1100px; margin: 0 auto; }
 .sign {
   position: relative; display: flex; align-items: center; gap: 20px; padding: 22px 64px 22px 26px;
   background: var(--c); color: var(--ink);
@@ -511,8 +477,6 @@ body.has-modal { overflow: hidden; }
 /* ---------- Summit -------------------------------------------------------- */
 
 .summit { position: relative; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; padding: 50vh var(--gutter) 0; }
-.checkpoint--summit { background: var(--orange); color: var(--ink); }
-.checkpoint--summit::before { color: var(--ink); }
 .summit__inner { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 0 80px; }
 .summit__hand { font-size: clamp(30px, 3.4vw, 46px); color: var(--lime); transform: rotate(-3deg); }
 .js .summit__hand[data-reveal].is-in { transform: rotate(-3deg); }
@@ -549,6 +513,8 @@ body.has-modal { overflow: hidden; }
 /* ---------- Responsive ---------------------------------------------------- */
 
 @media (max-width: 1100px) {
+  .signs { grid-template-columns: 1fr 1fr; }
+  .signs .sign:last-child { grid-column: 1 / -1; justify-self: center; }
   .pack { grid-template-columns: 1fr; }
   .pack__note { position: relative; top: 0; order: -1; transform: rotate(-1deg); min-height: 0; }
   .posters { grid-template-columns: 1fr 1fr; }
@@ -565,15 +531,11 @@ body.has-modal { overflow: hidden; }
   .case__grid { grid-template-columns: 1fr; }
   .case__matrix { grid-template-columns: 1fr 1fr; }
   .job__list { grid-template-columns: 1fr; }
-  .altimeter { right: auto; left: 12px; top: auto; bottom: 12px; transform: none; flex-direction: row; }
-  .altimeter__track { display: none; }
-  .altimeter__value { writing-mode: horizontal-tb; transform: none; padding: 6px 12px; }
 }
 
 @media (max-width: 720px) {
   .hero { padding-top: 120px; }
     .hero__ctas .btn { flex: 1 1 100%; }
-  .hero__where { display: none; }
   .chapter { padding-top: 40vh; padding-left: 12px; padding-right: 12px; }
   .panel { padding: 26px 20px; border-radius: 26px; }
   .profile__points button span { font-size: 10px; padding: 2px 5px; }

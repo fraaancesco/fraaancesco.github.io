@@ -198,11 +198,11 @@ const sectionObserver = new IntersectionObserver((entries) => {
 
 /* ─────────────────────────────── The climb (scroll) ─────────────────────────────── */
 
-// sky colours along the climb: dusk at sea level → deep night with lava glow at the top
+// sky colours along the climb: golden hour at sea level → night with lava glow at the top
 const SKY = [
-  [0, ['#2a1650', '#8a2d6b', '#ff8a5b']],
-  [0.5, ['#1d1145', '#5a2170', '#ff5f7e']],
-  [1, ['#0e0824', '#2e1050', '#ff5a3c']],
+  [0, ['#0d3b66', '#12808f', '#ffc857', '#ff7f50']],
+  [0.5, ['#0a2f52', '#0f6d7a', '#ffa040', '#ff5e4a']],
+  [1, ['#061a26', '#0b3d4a', '#d9502e', '#ff5a3c']],
 ];
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 const SKY_RGB = SKY.map(([p, cols]) => [p, cols.map(hex)]);
@@ -233,14 +233,14 @@ function onScroll() {
   altEl.textContent = Math.round(p * SUMMIT).toLocaleString('en-US');
 
   const sky = skyAt(p);
-  ['--sky1', '--sky2', '--sky3'].forEach((v, i) => root.style.setProperty(v, `rgb(${sky[i].join(',')})`));
+  ['--sky1', '--sky2', '--sky3', '--sky4'].forEach((v, i) => root.style.setProperty(v, `rgb(${sky[i].join(',')})`));
 
   const h = clamp(y / (hero.offsetHeight * 0.8));
   if (!reduced) {
     hero.style.setProperty('--hero-y', `${(-h * 90).toFixed(1)}px`);
     hero.style.setProperty('--hero-o', (1 - h * 1.1).toFixed(3));
   }
-  scene.api?.setProgress(p, sky[2]);
+  scene.api?.setProgress(p, sky[3]);
 }
 window.addEventListener('scroll', () => { if (!scrollQueued) { scrollQueued = true; requestAnimationFrame(onScroll); } }, { passive: true });
 

@@ -45,10 +45,10 @@ function height(x, z) {
   return h;
 }
 
-// height → colour: sea-level teal, violet hills, magenta slopes, dark ash at the top
+// height → colour: sea-level teal, green hills, terracotta & gold slopes, dark ash at the top
 const STOPS = [
-  [-3, '#1e3a63'], [1.5, '#2f2b6e'], [6, '#4a2c80'], [12, '#7a3590'],
-  [19, '#b8457f'], [24, '#e0607a'], [28, '#4b2a4f'], [32, '#2a1830'],
+  [-3, '#0e4a5a'], [1.5, '#13606a'], [6, '#1f7a5c'], [12, '#5f8f3e'],
+  [17, '#c8763a'], [22, '#e5553d'], [26, '#f0a03c'], [28.5, '#3a2a24'], [32, '#231a17'],
 ].map(([h, c]) => [h, new Color(c)]);
 function colorAt(h, out) {
   if (h <= STOPS[0][0]) return out.copy(STOPS[0][1]);
@@ -89,7 +89,7 @@ function buildTerrain(low) {
 
   const mat = new MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.92, metalness: 0.05 });
   // neon topographic contour lines (cyan at the bottom → pink near the top)
-  const uniforms = { uC1: { value: new Color('#3de0ff') }, uC2: { value: new Color('#ff4fa3') }, uGlow: { value: 0.55 } };
+  const uniforms = { uC1: { value: new Color('#3de0ff') }, uC2: { value: new Color('#ffd23f') }, uGlow: { value: 0.55 } };
   mat.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader
@@ -137,7 +137,7 @@ function buildSmoke(count) {
   geo.setAttribute('aAge', new Float32BufferAttribute(age.slice(), 1));
   const mat = new ShaderMaterial({
     transparent: true, depthWrite: false,
-    uniforms: { uScale: { value: 1 }, uA: { value: new Color('#ff8a6b') }, uB: { value: new Color('#7a5f9a') } },
+    uniforms: { uScale: { value: 1 }, uA: { value: new Color('#ff8a6b') }, uB: { value: new Color('#5c6f78') } },
     vertexShader: `
       attribute float aAge; varying float vAge; uniform float uScale;
       void main() {
@@ -167,15 +167,15 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
   renderer.setClearColor(0x000000, 0);
 
   const scene = new Scene();
-  scene.fog = new Fog('#ff8a5b', 40, 190);
+  scene.fog = new Fog('#ff7f50', 40, 190);
 
   const camera = new PerspectiveCamera(48, 1, 0.5, 600);
 
-  scene.add(new HemisphereLight('#a68bff', '#2a0f2f', 1.25));
+  scene.add(new HemisphereLight('#8fd8ff', '#3a2014', 1.2));
   const sun = new DirectionalLight('#ff9a6b', 2.4);   // sunset behind the volcano
   sun.position.set(-90, 30, -160);
   scene.add(sun);
-  const fill = new DirectionalLight('#ff6fb0', 0.7);   // pink bounce from the sea side
+  const fill = new DirectionalLight('#ff7a59', 0.7);   // coral bounce from the sea side
   fill.position.set(70, 50, 90);
   scene.add(fill);
 
@@ -184,7 +184,7 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
 
   const sea = new Mesh(
     new PlaneGeometry(600, 400),
-    new MeshStandardMaterial({ color: '#3d2a80', emissive: '#2a1660', emissiveIntensity: 0.6, roughness: 0.75, metalness: 0.15 }),
+    new MeshStandardMaterial({ color: '#11607a', emissive: '#0a3a4a', emissiveIntensity: 0.6, roughness: 0.95, metalness: 0.05 }),
   );
   sea.rotation.x = -Math.PI / 2;
   sea.position.set(0, -0.6, 0);

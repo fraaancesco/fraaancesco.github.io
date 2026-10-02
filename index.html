@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Francesco Pistorio — backend engineer at the foot of Etna</title>
   <meta name="description" content="Francesco Pistorio — backend engineer by day, security nerd by night. Java, Spring Boot, NestJS, Go. Catania, Italy.">
-  <meta name="theme-color" content="#1b1035">
+  <meta name="theme-color" content="#0b1d26">
   <meta property="og:title" content="Francesco Pistorio">
   <meta property="og:description" content="Backend engineer by day, security nerd by night — writing APIs at the foot of Etna.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://fraaancesco.github.io/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231b1035'/%3E%3Cpath d='M3 26 13 9l4 6 3-4 9 15z' fill='%23ff4fa3'/%3E%3Cpath d='m11 12 2-3 2 3' fill='none' stroke='%23ff8a3d' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1d26'/%3E%3Cpath d='M3 26 13 9l4 6 3-4 9 15z' fill='%23ff4fa3'/%3E%3Cpath d='m11 12 2-3 2 3' fill='none' stroke='%23ff8a3d' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Caveat:wght@600;700&family=Space+Mono:wght@400;700&display=swap">
@@ -26,8 +26,8 @@
   <div class="stage" aria-hidden="true">
     <canvas id="stage-canvas"></canvas>
     <svg class="stage-fallback" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMax slice">
-      <path d="M0 400V300l140-60 120 40 160-90 120 50L600 90l40 30 40-30 140 150 120-40 140 70 120-30v160z" fill="#3b2163"/>
-      <path d="M0 400v-60l200-40 180 50 220-80 200 70 180-40 220 50v50z" fill="#24133f"/>
+      <path d="M0 400V300l140-60 120 40 160-90 120 50L600 90l40 30 40-30 140 150 120-40 140 70 120-30v160z" fill="#1f6b5c"/>
+      <path d="M0 400v-60l200-40 180 50 220-80 200 70 180-40 220 50v50z" fill="#10464f"/>
       <path d="m600 90 40 30 40-30" fill="none" stroke="#ff8a3d" stroke-width="6"/>
     </svg>
   </div>
@@ -97,7 +97,6 @@
       <p class="hero__where mono" data-hero-item>
         <span class="pin" aria-hidden="true"></span> Catania, Sicily · sea level · Etna in the background
       </p>
-      <div class="sticker sticker--hero" data-hero-item aria-hidden="true">may be slow<br>to respond 🥝</div>
     </section>
 
     <!-- ───────── ABOUT ───────── -->
@@ -144,12 +143,12 @@
           <svg class="profile__svg" viewBox="0 0 1000 240" preserveAspectRatio="none" aria-hidden="true">
             <defs>
               <linearGradient id="pf" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0" stop-color="#ff4fa3" stop-opacity=".55"/>
-                <stop offset="1" stop-color="#ff4fa3" stop-opacity="0"/>
+                <stop offset="0" stop-color="#ff5c7a" stop-opacity=".55"/>
+                <stop offset="1" stop-color="#ff5c7a" stop-opacity="0"/>
               </linearGradient>
               <linearGradient id="ps" x1="0" x2="1">
                 <stop offset="0" stop-color="#3de0ff"/>
-                <stop offset=".6" stop-color="#ff4fa3"/>
+                <stop offset=".6" stop-color="#ff5c7a"/>
                 <stop offset="1" stop-color="#ff8a3d"/>
               </linearGradient>
             </defs>
@@ -219,7 +218,7 @@
           <button type="button" class="filter" data-filter="backend" aria-pressed="false" style="--c:var(--pink)">back-end</button>
           <button type="button" class="filter" data-filter="lang" aria-pressed="false" style="--c:var(--cream)">languages</button>
           <button type="button" class="filter" data-filter="data" aria-pressed="false" style="--c:var(--cyan)">data</button>
-          <button type="button" class="filter" data-filter="devops" aria-pressed="false" style="--c:var(--violet)">devops</button>
+          <button type="button" class="filter" data-filter="devops" aria-pressed="false" style="--c:var(--yellow)">devops</button>
           <button type="button" class="filter" data-filter="frontend" aria-pressed="false" style="--c:var(--lime)">front-end</button>
           <button type="button" class="filter" data-filter="security" aria-pressed="false" style="--c:var(--orange)">security</button>
         </div>
@@ -231,12 +230,6 @@
             <p class="pack__name" id="skill-name">↖</p>
             <p class="pack__text" id="skill-text">Each item says where it actually shows up in my work.</p>
           </aside>
-        </div>
-      </div>
-      <div class="marquee" aria-hidden="true">
-        <div class="marquee__track">
-          <span>Java</span><i>✦</i><span>Spring Boot</span><i>✦</i><span>NestJS</span><i>✦</i><span>Go</span><i>✦</i><span>PostgreSQL</span><i>✦</i><span>MongoDB</span><i>✦</i><span>Docker</span><i>✦</i><span>Vue.js</span><i>✦</i><span>Linux</span><i>✦</i>
-          <span>Java</span><i>✦</i><span>Spring Boot</span><i>✦</i><span>NestJS</span><i>✦</i><span>Go</span><i>✦</i><span>PostgreSQL</span><i>✦</i><span>MongoDB</span><i>✦</i><span>Docker</span><i>✦</i><span>Vue.js</span><i>✦</i><span>Linux</span><i>✦</i>
         </div>
       </div>
     </section>
@@ -353,8 +346,7 @@
       <div class="summit__inner">
         <p class="hand summit__hand" data-reveal>you made it to the top!</p>
         <h2 class="summit__title" id="contact-title" data-reveal>Now say <span class="summit__hi">hi.</span></h2>
-        <p class="summit__lede" data-reveal>New challenges, a side project, a chat about backend or security — my inbox is open.
-          <span class="muted">(I may be slow to respond. I always respond.)</span></p>
+        <p class="summit__lede" data-reveal>New challenges, a side project, a chat about backend or security — my inbox is open.</p>
         <div class="summit__cta" data-reveal>
           <a class="btn btn--lime btn--xl" href="mailto:fraaancoisdev@gmail.com" data-magnetic>fraaancoisdev@gmail.com <span aria-hidden="true">↗</span></a>
           <button class="copy mono" type="button" data-copy="fraaancoisdev@gmail.com"><span class="copy__label">copy email</span></button>

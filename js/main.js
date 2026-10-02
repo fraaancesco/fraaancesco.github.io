@@ -20,6 +20,7 @@ const EN_UI = {
   openMenu: 'Open menu', closeMenu: 'Close menu', copy: 'copy email', copied: 'copied ✓', focus: ' · current focus',
   whatItChecks: 'what it checks', whatItFlags: 'what it flags',
   sev: { critical: 'critical', high: 'high', medium: 'medium', low: 'low', lowInfo: 'low / info' },
+  live: 'live from GitHub', updated: 'updated',
   stim: {
     soon: 'coming soon',
     hiking: ['Trails', 'hikes will land here — tracks, summits, views'],
@@ -647,6 +648,52 @@ lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLigh
 lightbox.addEventListener('close', () => document.body.classList.remove('has-modal'));
 renderStimoli();
 
+/* ─────────────────────────────── GitHub, live ─────────────────────────────── */
+
+// Each project card shows when its repository was last pushed and its language mix,
+// straight from the public GitHub API. Data is fetched once per page load (a refresh
+// shows the latest state; nothing polls in the background) and the row stays hidden
+// if GitHub can't be reached: never fake numbers. 4 requests per visit — one for all
+// push dates, one per repo for languages — well within the 60/hour unauthenticated limit.
+const ghData = {};
+const ghJson = (url) => fetch(url).then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
+async function loadGitHub() {
+  const els = $$('.gh-live');
+  let repos;
+  try { repos = await ghJson('https://api.github.com/users/fraaancesco/repos?per_page=100'); } catch { return; }
+  const pushed = Object.fromEntries(repos.map((r) => [r.full_name.toLowerCase(), r.pushed_at]));
+  await Promise.all(els.map(async (el) => {
+    const repo = el.dataset.repo;
+    const when = pushed[repo.toLowerCase()];
+    if (!when) return;
+    try {
+      ghData[repo] = { pushed: when, langs: await ghJson(`https://api.github.com/repos/${repo}/languages`) };
+      renderGh(el);
+    } catch { /* leave hidden */ }
+  }));
+}
+function timeAgo(iso) {
+  const rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' });
+  const s = (new Date(iso) - Date.now()) / 1000;
+  const units = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]];
+  for (const [u, sec] of units) if (Math.abs(s) >= sec) return rtf.format(Math.round(s / sec), u);
+  return rtf.format(0, 'minute');
+}
+function renderGh(el) {
+  const data = ghData[el.dataset.repo];
+  if (!data) return;
+  const total = Object.values(data.langs).reduce((a, b) => a + b, 0) || 1;
+  const langs = Object.entries(data.langs).map(([name, bytes]) => [name, (bytes / total) * 100]).filter(([, p]) => p >= 1).slice(0, 3);
+  el.innerHTML = `<p class="gh-live__when mono"><span class="gh-live__dot" aria-hidden="true"></span>${t('live')} · ${t('updated')} ${timeAgo(data.pushed)}</p>
+    <div class="gh-live__bar" aria-hidden="true">${langs.map(([, p], i) => `<span style="width:${p.toFixed(1)}%;--o:${[1, 0.55, 0.3][i]}"></span>`).join('')}</div>
+    <p class="gh-live__langs mono">${langs.map(([n, p]) => `${esc(n)} ${Math.round(p)}%`).join(' · ')}</p>`;
+  el.hidden = false;
+}
+const ghEls = $$('.gh-live');
+// after first paint, so it never competes with the page itself
+if ('requestIdleCallback' in window) requestIdleCallback(loadGitHub, { timeout: 2000 });
+else setTimeout(loadGitHub, 800);
+
 /* ─────────────────────────────── Click spark ─────────────────────────────── */
 
 // A burst of lava-coloured sparks wherever you click or tap. One fixed 2D canvas,
@@ -755,6 +802,7 @@ function setLang(next) {
   splitTitles();
   renderPack();
   renderStimoli();
+  ghEls.forEach(renderGh);
   labelWaypoints();
   showWaypoint(currentWp);
   $$('.copy__label').forEach((l) => { l.textContent = t('copy'); });

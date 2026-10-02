@@ -5,6 +5,7 @@ Aggiungi una riga ogni volta che cambi qualcosa di visibile.
 
 ## 2026-10
 
+- **GitHub dal vivo**: le card dei progetti mostrano ultimo aggiornamento e linguaggi letti dalle API pubbliche di GitHub a ogni caricamento della pagina (nascosti se GitHub non risponde).
 - **Click Spark**: scintille color lava a ogni click/tap (canvas attivo solo durante l'animazione; disattivato con riduzione animazioni).
 - **Animazioni** (ispirate a Vue Bits, in vanilla): titoli Split Text, riflesso Shiny Text su "Start the climb", Scroll Stack per Stimoli al posto della griglia di polaroid.
 - **Performance**: primo testo visibile da ~6 s a ~0,6 s (font non bloccanti, hero senza attesa del `load`); 3D circa 3× più veloce su desktop (illuminazione pre-calcolata nei vertici, terreno a blocchi senza triangoli sommersi, antialiasing solo su schermi 1×, risoluzione adattiva, 30 fps a pagina ferma, pausa con menu/dialog aperti). Bagliore del cratere ora è uno sprite che pulsa.

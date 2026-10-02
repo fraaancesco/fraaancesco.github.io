@@ -534,6 +534,17 @@ body.has-modal { overflow: hidden; }
 }
 .is-split-in .split-c { opacity: 1; transform: none; }
 
+/* GitHub live row on project posters */
+.gh-live { display: grid; gap: 6px; }
+.gh-live[hidden] { display: none; }
+.gh-live__when { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; }
+.gh-live__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); animation: gh-pulse 2s ease-in-out infinite; }
+@keyframes gh-pulse { 50% { opacity: .3; } }
+.gh-live__bar { display: flex; height: 6px; border-radius: 99px; overflow: hidden; background: rgba(11, 29, 38, .15); }
+.gh-live__bar span { background: var(--ink); opacity: var(--o, 1); }
+.gh-live__bar span + span { margin-left: 2px; }
+.gh-live__langs { font-size: 11px; opacity: .8; }
+
 /* click spark: lava sparks on click (drawn on a fixed 2D canvas) */
 .sparks-layer { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 100; pointer-events: none; }
 

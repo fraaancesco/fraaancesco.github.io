@@ -73,6 +73,8 @@ Poi in `js/i18n.js` → `skills`, aggiungi la descrizione italiana con la stessa
 1. **Card** in `index.html`: copia un blocco `<article class="poster …">` e cambia colore
    (`poster--lime` / `poster--pink` / `poster--orange`), testi, tag e `data-open="chiave"`.
    Aggiungi `data-i18n="proj.chiave"` alla descrizione.
+   Per i dati GitHub dal vivo (ultimo aggiornamento + linguaggi) aggiungi sotto i tag:
+   `<div class="gh-live" data-repo="fraaancesco/nome-repo" hidden></div>` — il repository deve essere pubblico.
 2. **Case study** in `js/main.js` → `PROJECTS.chiave` (`index`, `title`, `lede`, `problem`, `built`, `stack`, `result`, `link`, `color`, `extra`).
 3. **Traduzioni** in `js/i18n.js` → `projects.chiave` (stessi campi testuali) e `static['proj.chiave']`.
 

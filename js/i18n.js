@@ -110,6 +110,7 @@ export const IT = {
     whatItChecks: 'cosa controlla',
     whatItFlags: 'cosa segnala',
     sev: { critical: 'critici', high: 'alti', medium: 'medi', low: 'bassi', lowInfo: 'bassi / info' },
+    live: 'in diretta da GitHub', updated: 'aggiornato',
     stim: {
       soon: 'presto qui',
       hiking: ['Sentieri', 'le escursioni arriveranno qui — tracce, cime, panorami'],

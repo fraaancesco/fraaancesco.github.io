@@ -115,6 +115,7 @@ Poche e belle:
 4. tilt dei poster + apertura del case study "dalla card",
 5. pulsanti magnetici + **Shiny Text** sul CTA principale (`.btn--shine`, solo `transform`),
 6. **Scroll Stack** in Stimoli (card sticky che si coprono; quella sotto si rimpicciolisce e scurisce).
+7. **Click Spark**: scintille color lava (`#ff5a1f`, `#ff8a3d`, `#ffb347`, `#ffd23f`) a ogni click/tap.
 
 Effetti ispirati a Vue Bits ma riscritti in JS/CSS vanilla: **non aggiungere Vue o altre librerie**.
 

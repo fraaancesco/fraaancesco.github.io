@@ -534,6 +534,9 @@ body.has-modal { overflow: hidden; }
 }
 .is-split-in .split-c { opacity: 1; transform: none; }
 
+/* click spark: lava sparks on click (drawn on a fixed 2D canvas) */
+.sparks-layer { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 100; pointer-events: none; }
+
 /* shiny text: a sweep of light across the main CTA */
 .btn--shine { position: relative; overflow: hidden; isolation: isolate; }
 .btn--shine::after {

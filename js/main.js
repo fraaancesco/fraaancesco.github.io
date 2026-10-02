@@ -647,6 +647,57 @@ lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLigh
 lightbox.addEventListener('close', () => document.body.classList.remove('has-modal'));
 renderStimoli();
 
+/* ─────────────────────────────── Click spark ─────────────────────────────── */
+
+// A burst of lava-coloured sparks wherever you click or tap. One fixed 2D canvas,
+// animated only while sparks are alive; ignored for keyboard "clicks" and reduced motion.
+const sparkCanvas = document.createElement('canvas');
+sparkCanvas.className = 'sparks-layer';
+sparkCanvas.setAttribute('aria-hidden', 'true');
+document.body.append(sparkCanvas);
+const sparkCtx = sparkCanvas.getContext('2d');
+const SPARK_COLORS = ['#ff5a1f', '#ff8a3d', '#ffb347', '#ffd23f'];
+let sparks = [];
+let sparkRaf = 0;
+function sizeSparks() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  sparkCanvas.width = innerWidth * dpr;
+  sparkCanvas.height = innerHeight * dpr;
+  sparkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+sizeSparks();
+window.addEventListener('resize', sizeSparks);
+
+function drawSparks(now) {
+  sparkCtx.clearRect(0, 0, innerWidth, innerHeight);
+  sparks = sparks.filter((s) => now - s.t0 < s.life);
+  for (const s of sparks) {
+    const k = (now - s.t0) / s.life;               // 0 → 1
+    const ease = 1 - Math.pow(1 - k, 3);
+    const dist = s.reach * ease;
+    const len = s.len * (1 - k);
+    const x1 = s.x + Math.cos(s.a) * dist, y1 = s.y + Math.sin(s.a) * dist + 14 * k * k; // a touch of gravity
+    const x2 = x1 + Math.cos(s.a) * len, y2 = y1 + Math.sin(s.a) * len;
+    sparkCtx.strokeStyle = s.c;
+    sparkCtx.globalAlpha = 1 - k * 0.6;
+    sparkCtx.lineWidth = 2.2 * (1 - k) + 0.6;
+    sparkCtx.beginPath(); sparkCtx.moveTo(x1, y1); sparkCtx.lineTo(x2, y2); sparkCtx.stroke();
+  }
+  sparkCtx.globalAlpha = 1;
+  sparkRaf = sparks.length ? requestAnimationFrame(drawSparks) : 0;
+}
+
+document.addEventListener('click', (e) => {
+  if (reduced || e.detail === 0) return;          // keyboard activation has detail 0
+  const t0 = performance.now();
+  const n = 10;
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+    sparks.push({ x: e.clientX, y: e.clientY, a, t0, life: 420 + Math.random() * 220, reach: 26 + Math.random() * 22, len: 8 + Math.random() * 8, c: SPARK_COLORS[(Math.random() * SPARK_COLORS.length) | 0] });
+  }
+  if (!sparkRaf) sparkRaf = requestAnimationFrame(drawSparks);
+});
+
 /* ─────────────────────────────── Split text titles ─────────────────────────────── */
 
 // Each letter of a section title rises in on its own when the title scrolls into view.

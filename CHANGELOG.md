@@ -5,6 +5,8 @@ Aggiungi una riga ogni volta che cambi qualcosa di visibile.
 
 ## 2026-10
 
+- **Responsive**: titolo hero che non esce più dallo schermo sui telefoni piccoli; sottolineature ondulate dei titoli che non toccano più il testo sotto; padding mobile delle sezioni finalmente applicato (un selettore CSS rotto lo annullava); poster in evidenza orizzontale sui tablet; menu a burger fino a 1180px (la barra non si accavalla più sui tablet); menu scorrevole e niente scroll-stack con il telefono in orizzontale; effetti hover solo su dispositivi con mouse (niente stati "bloccati" dopo un tap); ritocchi sotto i 380px.
+- **Performance**: 3D e cielo dimensionati sul viewport grande, quindi la barra degli indirizzi su mobile non ridimensiona più il canvas WebGL; scroll-stack aggiornato una volta per frame senza layout thrashing; cielo aggiornato solo quando i colori cambiano; canvas delle scintille allocato solo al primo click.
 - **About**: nuovo sticker "codes in Java & Go" / "scrivo in Java & Go".
 - **GitHub dal vivo**: le card dei progetti mostrano ultimo aggiornamento e linguaggi letti dalle API pubbliche di GitHub a ogni caricamento della pagina (nascosti se GitHub non risponde).
 - **Click Spark**: scintille color lava a ogni click/tap (canvas attivo solo durante l'animazione; disattivato con riduzione animazioni).

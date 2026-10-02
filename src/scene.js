@@ -390,6 +390,8 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
   let width = 0, heightPx = 0, rafId = 0, running = true, t = 0, last = performance.now();
 
   function resize() {
+    // the canvas is sized on the large viewport, so mobile URL-bar moves don't reach here; skip no-op resizes anyway
+    if (canvas.clientWidth === width && canvas.clientHeight === heightPx) return;
     width = canvas.clientWidth; heightPx = canvas.clientHeight;
     renderer.setSize(width, heightPx, false);
     camera.aspect = width / heightPx;

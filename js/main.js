@@ -204,6 +204,8 @@ function setMenu(open) {
 }
 toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
 menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+// rotating a tablet past the burger breakpoint closes the menu (the toggle disappears with it)
+window.matchMedia('(min-width: 1181px)').addEventListener('change', (e) => { if (e.matches && toggle.getAttribute('aria-expanded') === 'true') setMenu(false); });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') { setMenu(false); toggle.focus(); }
 });
@@ -253,6 +255,7 @@ let scrollQueued = false;
 const skyEl = $('.sky');
 let heroH = hero.offsetHeight * 0.8;
 let lastHeroH = -1;
+let lastSky = '';
 window.addEventListener('resize', () => { heroH = hero.offsetHeight * 0.8; });
 function onScroll() {
   scrollQueued = false;
@@ -266,7 +269,11 @@ function onScroll() {
 
   // sky colours live on the .sky element only: changing them on <html> would restyle the whole page every frame
   const sky = skyAt(p);
-  ['--sky1', '--sky2', '--sky3', '--sky4'].forEach((v, i) => skyEl.style.setProperty(v, `rgb(${sky[i].join(',')})`));
+  const skyKey = sky.join('|');
+  if (skyKey !== lastSky) {
+    lastSky = skyKey;
+    ['--sky1', '--sky2', '--sky3', '--sky4'].forEach((v, i) => skyEl.style.setProperty(v, `rgb(${sky[i].join(',')})`));
+  }
 
   const h = clamp(y / heroH);
   if (!reduced && h !== lastHeroH) {
@@ -605,20 +612,21 @@ let stackActive = false;
 function updateStack() {
   if (!stackActive || reduced) return;
   const cards = $$('.stack-card:not([hidden])', stimGrid);
+  const rects = cards.map((c) => c.getBoundingClientRect());
   cards.forEach((card, i) => {
-    const next = cards[i + 1];
-    let p = 0;
-    if (next) {
-      const r = card.getBoundingClientRect();
-      const n = next.getBoundingClientRect();
-      p = clamp((r.bottom - n.top) / r.height);
-    }
+    const r = rects[i], n = rects[i + 1];
+    const p = n ? clamp((r.bottom - n.top) / r.height) : 0;
     card.style.setProperty('--s', (1 - p * 0.07).toFixed(4));
     card.style.setProperty('--dim', (p * 0.35).toFixed(3));
   });
 }
+let stackQueued = false;
 new IntersectionObserver(([e]) => { stackActive = e.isIntersecting; if (stackActive) updateStack(); }, { rootMargin: '20% 0px' }).observe(stimGrid);
-window.addEventListener('scroll', () => { if (stackActive) requestAnimationFrame(updateStack); }, { passive: true });
+window.addEventListener('scroll', () => {
+  if (!stackActive || stackQueued) return;
+  stackQueued = true;
+  requestAnimationFrame(() => { stackQueued = false; updateStack(); });
+}, { passive: true });
 $$('[data-stim]').forEach((f) => {
   f.addEventListener('click', () => {
     $$('[data-stim]').forEach((x) => { x.classList.toggle('is-on', x === f); x.setAttribute('aria-pressed', String(x === f)); });
@@ -712,8 +720,8 @@ function sizeSparks() {
   sparkCanvas.height = innerHeight * dpr;
   sparkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
-sizeSparks();
-window.addEventListener('resize', sizeSparks);
+let sparksDirty = true;
+window.addEventListener('resize', () => { sparksDirty = true; });
 
 function drawSparks(now) {
   sparkCtx.clearRect(0, 0, innerWidth, innerHeight);
@@ -742,6 +750,7 @@ document.addEventListener('click', (e) => {
     const a = (i / n) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
     sparks.push({ x: e.clientX, y: e.clientY, a, t0, life: 420 + Math.random() * 220, reach: 26 + Math.random() * 22, len: 8 + Math.random() * 8, c: SPARK_COLORS[(Math.random() * SPARK_COLORS.length) | 0] });
   }
+  if (sparksDirty) { sizeSparks(); sparksDirty = false; }
   if (!sparkRaf) sparkRaf = requestAnimationFrame(drawSparks);
 });
 

@@ -5,6 +5,7 @@ Aggiungi una riga ogni volta che cambi qualcosa di visibile.
 
 ## 2026-10
 
+- **Animazioni** (ispirate a Vue Bits, in vanilla): titoli Split Text, riflesso Shiny Text su "Start the climb", Scroll Stack per Stimoli al posto della griglia di polaroid.
 - **Performance**: primo testo visibile da ~6 s a ~0,6 s (font non bloccanti, hero senza attesa del `load`); 3D circa 3× più veloce su desktop (illuminazione pre-calcolata nei vertici, terreno a blocchi senza triangoli sommersi, antialiasing solo su schermi 1×, risoluzione adattiva, 30 fps a pagina ferma, pausa con menu/dialog aperti). Bagliore del cratere ora è uno sprite che pulsa.
 - **Training**: tolta la riga "TryHackMe" dalla voce Cybersecurity.
 - **Training**: voci in ordine cronologico (diploma → laurea → cybersecurity).

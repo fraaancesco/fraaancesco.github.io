@@ -568,29 +568,56 @@ function renderStimoli() {
     if (!entries.length) cards.push({ type, placeholder: true });
     entries.forEach((e) => cards.push({ type, e }));
   });
-  stimGrid.innerHTML = cards.map((c, i) => {
-    const hidden = stimFilter !== 'all' && c.type !== stimFilter ? ' hidden' : '';
-    const style = `style="--c:${STIM_COLOR[c.type]};--r:${((i * 5) % 7) - 3}deg"`;
+  let shown = 0;
+  stimGrid.innerHTML = cards.map((c) => {
+    const isHidden = stimFilter !== 'all' && c.type !== stimFilter;
+    const hidden = isHidden ? ' hidden' : '';
+    const style = `style="--c:${STIM_COLOR[c.type]};--i:${isHidden ? 0 : shown++}"`;
+    const kicker = `<p class="stack-card__kicker mono">${ui[c.type][0]}</p>`;
     if (c.placeholder) {
       const [title, note] = ui[c.type];
-      return `<li class="polaroid polaroid--soon"${hidden} ${style}>
-        <div class="polaroid__pic">${STIM_ART[c.type]}<span class="polaroid__soon mono">${ui.soon}</span></div>
-        <p class="polaroid__title">${title}</p><p class="polaroid__note hand">${note}</p></li>`;
+      return `<li class="stack-card stack-card--soon"${hidden} ${style}>
+        <div class="stack-card__pic">${STIM_ART[c.type]}<span class="stack-card__soon mono">${ui.soon}</span></div>
+        <div class="stack-card__body">${kicker}<p class="stack-card__title">${title}</p><p class="stack-card__note hand">${note}</p></div></li>`;
     }
     const { e } = c;
     const meta = [e.place, e.date].filter(Boolean).map(esc).join(' · ');
     const pic = e.image
       ? `<img src="${esc(e.image)}" alt="${esc(loc(e.title))}" loading="lazy" decoding="async">`
       : STIM_ART[c.type];
-    return `<li class="polaroid"${hidden} ${style}>
-      <button type="button" class="polaroid__open" data-stim-open="${STIMOLI.indexOf(e)}" aria-label="${esc(loc(e.title))}"></button>
-      <div class="polaroid__pic">${pic}</div>
-      <p class="polaroid__title">${esc(loc(e.title))}</p>
-      ${e.note ? `<p class="polaroid__note hand">${esc(loc(e.note))}</p>` : ''}
-      ${meta ? `<p class="polaroid__meta mono">${meta}</p>` : ''}
-      ${e.link ? `<a class="polaroid__link mono" href="${esc(e.link)}" target="_blank" rel="noopener">↗</a>` : ''}</li>`;
+    return `<li class="stack-card"${hidden} ${style}>
+      <button type="button" class="stack-card__open" data-stim-open="${STIMOLI.indexOf(e)}" aria-label="${esc(loc(e.title))}"></button>
+      <div class="stack-card__pic">${pic}</div>
+      <div class="stack-card__body">${kicker}
+        <p class="stack-card__title">${esc(loc(e.title))}</p>
+        ${e.note ? `<p class="stack-card__note hand">${esc(loc(e.note))}</p>` : ''}
+        ${meta ? `<p class="stack-card__meta mono">${meta}</p>` : ''}
+        ${e.link ? `<a class="stack-card__link mono" href="${esc(e.link)}" target="_blank" rel="noopener">${lang === 'it' ? 'apri' : 'open'} ↗</a>` : ''}
+      </div></li>`;
   }).join('');
+  updateStack();
 }
+
+/* Scroll stack: each card sticks near the top; while the next one slides over it,
+   the covered card shrinks and darkens a little. Only runs while the section is on screen. */
+let stackActive = false;
+function updateStack() {
+  if (!stackActive || reduced) return;
+  const cards = $$('.stack-card:not([hidden])', stimGrid);
+  cards.forEach((card, i) => {
+    const next = cards[i + 1];
+    let p = 0;
+    if (next) {
+      const r = card.getBoundingClientRect();
+      const n = next.getBoundingClientRect();
+      p = clamp((r.bottom - n.top) / r.height);
+    }
+    card.style.setProperty('--s', (1 - p * 0.07).toFixed(4));
+    card.style.setProperty('--dim', (p * 0.35).toFixed(3));
+  });
+}
+new IntersectionObserver(([e]) => { stackActive = e.isIntersecting; if (stackActive) updateStack(); }, { rootMargin: '20% 0px' }).observe(stimGrid);
+window.addEventListener('scroll', () => { if (stackActive) requestAnimationFrame(updateStack); }, { passive: true });
 $$('[data-stim]').forEach((f) => {
   f.addEventListener('click', () => {
     $$('[data-stim]').forEach((x) => { x.classList.toggle('is-on', x === f); x.setAttribute('aria-pressed', String(x === f)); });
@@ -620,12 +647,61 @@ lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLigh
 lightbox.addEventListener('close', () => document.body.classList.remove('has-modal'));
 renderStimoli();
 
+/* ─────────────────────────────── Split text titles ─────────────────────────────── */
+
+// Each letter of a section title rises in on its own when the title scrolls into view.
+// Highlighted words (.hl) move as one piece so their wavy underline stays intact.
+const SPLIT_SELECTOR = '.title, .summit__title';
+function splitTitles() {
+  if (reduced) return;
+  $$(SPLIT_SELECTOR).forEach((el) => {
+    el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
+    let i = 0;
+    const walk = (node) => {
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.append(' '); return; }
+            const word = document.createElement('span');
+            word.className = 'split-w';
+            word.setAttribute('aria-hidden', 'true');
+            [...part].forEach((ch) => {
+              const c = document.createElement('span');
+              c.className = 'split-c';
+              c.style.setProperty('--i', i++);
+              c.textContent = ch;
+              word.append(c);
+            });
+            frag.append(word);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && !n.classList.contains('split-w')) {
+          if (n.classList.contains('hl') || n.classList.contains('summit__hi')) {
+            n.classList.add('split-c');
+            n.setAttribute('aria-hidden', 'true');
+            n.style.setProperty('--i', i);
+            i += 3;
+          } else walk(n);
+        }
+      });
+    };
+    walk(el);
+  });
+}
+const titleObserver = new IntersectionObserver((entries) => {
+  entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-split-in'); titleObserver.unobserve(e.target); } });
+}, { threshold: 0.35 });
+$$(SPLIT_SELECTOR).forEach((el) => titleObserver.observe(el));
+
 /* ─────────────────────────────── Language switch ─────────────────────────────── */
 
 function setLang(next) {
   lang = next;
   try { localStorage.setItem('lang', lang); } catch { /* ignore */ }
   applyStatic();
+  splitTitles();
   renderPack();
   renderStimoli();
   labelWaypoints();
@@ -633,4 +709,4 @@ function setLang(next) {
   $$('.copy__label').forEach((l) => { l.textContent = t('copy'); });
 }
 $$('[data-lang]').forEach((b) => b.addEventListener('click', () => { if (b.dataset.lang !== lang) setLang(b.dataset.lang); }));
-if (lang === 'it') setLang('it'); else applyStatic();
+if (lang === 'it') setLang('it'); else { applyStatic(); splitTitles(); }

@@ -42,6 +42,7 @@ export const STIMOLI = [
 
 - Quando una categoria ha almeno una voce, la card "coming soon" di quella categoria sparisce da sola.
 - Senza `image` la card mostra un'illustrazione colorata al posto della foto.
+- Le voci compaiono come card impilate (Scroll Stack): l'ordine della lista è l'ordine dello stack.
 - Attenzione agli apostrofi: usa le virgolette doppie (`"prima neve dell'anno"`) oppure `\'`.
 
 ---

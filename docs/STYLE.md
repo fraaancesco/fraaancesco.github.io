@@ -80,7 +80,7 @@ e verso la vetta notte petrolio con bagliore di lava.
 | Card lavoro | `.job` | colore pieno, espandibile |
 | Poster progetto | `.poster` | colore pieno, apre il case study |
 | Cartello | `.sign` | numeri/statistiche (forma a freccia) |
-| Polaroid | `.polaroid` | foto/hobby nella sezione Stimoli, con nastro adesivo |
+| Card dello stack | `.stack-card` | foto/hobby nella sezione Stimoli: card crema con nastro adesivo, impilate con lo scroll (Scroll Stack) |
 | Filtri | `.filter` + `--c` | pillole per filtrare per categoria |
 
 Elementi "storti": usare piccole rotazioni (`-4deg … 5deg`) che tornano dritte all'hover.
@@ -111,9 +111,12 @@ Sorgente: `src/scene.js` → build in `js/scene.js` (`npm run build`).
 Poche e belle:
 1. decodifica del nome nell'hero,
 2. salita della camera con lo scroll,
-3. comparsa delle sezioni (`[data-reveal]`),
+3. comparsa delle sezioni (`[data-reveal]`) e **titoli Split Text**: le lettere di `.title` / `.summit__title` salgono una a una (le parole `.hl` come blocco unico),
 4. tilt dei poster + apertura del case study "dalla card",
-5. pulsanti magnetici.
+5. pulsanti magnetici + **Shiny Text** sul CTA principale (`.btn--shine`, solo `transform`),
+6. **Scroll Stack** in Stimoli (card sticky che si coprono; quella sotto si rimpicciolisce e scurisce).
+
+Effetti ispirati a Vue Bits ma riscritti in JS/CSS vanilla: **non aggiungere Vue o altre librerie**.
 
 Rispettare sempre `prefers-reduced-motion`.
 

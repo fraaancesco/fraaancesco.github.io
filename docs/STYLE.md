@@ -96,7 +96,13 @@ Sorgente: `src/scene.js` → build in `js/scene.js` (`npm run build`).
 - Vulcano **scuro** (toni basalto: marroni e rossi scuri), cima innevata.
 - **Lava realistica**: crosta scura con crepe incandescenti che scorrono, più calda vicino al cratere; scintille dal cratere; fumo.
 - Su desktop il vulcano sta a destra del nome nell'hero; su mobile sotto i pulsanti.
-- Performance: un solo canvas WebGL; su dispositivi deboli ~24 fps e meno dettaglio; niente `backdrop-filter` sopra il canvas su mobile.
+- Performance (non peggiorarle):
+  - **illuminazione pre-calcolata**: terreno e mare non usano luci in tempo reale; la luce (emisfero, sole, luce di riempimento, lava) è calcolata una volta in `shade()` e salvata nei colori dei vertici. Se cambi i colori delle luci, cambiali in `LIGHT` (`src/scene.js`).
+  - terreno diviso in 4×4 blocchi (quelli fuori inquadratura non vengono disegnati); i triangoli sotto il mare sono scartati;
+  - antialiasing solo su schermi 1×, pixel ratio max 1.5, **risoluzione adattiva** se il dispositivo fatica;
+  - 30 fps quando la pagina è ferma, piena velocità durante scroll/mouse, ~24 fps su dispositivi deboli; render in pausa con menu/case study aperti o tab nascosta;
+  - un solo canvas WebGL; niente `backdrop-filter` sopra il canvas su mobile.
+- Pagina: i font non bloccano il primo render (preload + `media="print"` → `all`); l'hero compare subito; durante lo scroll si scrive solo su `.sky` e `.hero`, mai su `<html>`.
 
 ---
 

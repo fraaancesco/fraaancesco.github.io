@@ -156,8 +156,8 @@ const PROJECTS = {
 
 /* ─────────────────────────────── Boot ─────────────────────────────── */
 
-window.addEventListener('load', () => root.classList.add('is-loaded'), { once: true });
-setTimeout(() => root.classList.add('is-loaded'), 1800); // never leave the hero hidden
+// reveal the hero as soon as the DOM is ready: no waiting for fonts, 3D or the load event
+requestAnimationFrame(() => root.classList.add('is-loaded'));
 $('#year').textContent = new Date().getFullYear();
 
 function scramble(el, delay = 0) {
@@ -249,6 +249,10 @@ const hero = $('.hero');
 const scene = { api: null, p: 0 };
 let scrollQueued = false;
 
+const skyEl = $('.sky');
+let heroH = hero.offsetHeight * 0.8;
+let lastHeroH = -1;
+window.addEventListener('resize', () => { heroH = hero.offsetHeight * 0.8; });
 function onScroll() {
   scrollQueued = false;
   const y = window.scrollY;
@@ -257,14 +261,15 @@ function onScroll() {
   const p = clamp(y / max);
   scene.p = p;
 
-  root.style.setProperty('--progress', p.toFixed(4));
   nav.classList.toggle('is-compact', y > 40);
 
+  // sky colours live on the .sky element only: changing them on <html> would restyle the whole page every frame
   const sky = skyAt(p);
-  ['--sky1', '--sky2', '--sky3', '--sky4'].forEach((v, i) => root.style.setProperty(v, `rgb(${sky[i].join(',')})`));
+  ['--sky1', '--sky2', '--sky3', '--sky4'].forEach((v, i) => skyEl.style.setProperty(v, `rgb(${sky[i].join(',')})`));
 
-  const h = clamp(y / (hero.offsetHeight * 0.8));
-  if (!reduced) {
+  const h = clamp(y / heroH);
+  if (!reduced && h !== lastHeroH) {
+    lastHeroH = h;
     hero.style.setProperty('--hero-y', `${(-h * 90).toFixed(1)}px`);
     hero.style.setProperty('--hero-o', (1 - h * 1.1).toFixed(3));
   }

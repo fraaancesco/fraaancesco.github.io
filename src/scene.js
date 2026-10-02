@@ -6,8 +6,8 @@
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Color, Fog, Vector3,
   PlaneGeometry, CircleGeometry, BufferGeometry, Float32BufferAttribute,
-  MeshStandardMaterial, MeshBasicMaterial, PointsMaterial, ShaderMaterial,
-  Mesh, Points, HemisphereLight, DirectionalLight, PointLight,
+  MeshBasicMaterial, PointsMaterial, ShaderMaterial,
+  Mesh, Points, Group,
   CatmullRomCurve3, AdditiveBlending, MathUtils, UniformsLib,
 } from 'three';
 
@@ -56,36 +56,99 @@ function colorAt(h, out) {
   return out.copy(STOPS[STOPS.length - 1][1]);
 }
 
+/* ---------- baked lighting ----------------------------------------------
+   Terrain and sea never move and the lights never move, so their lighting is
+   computed once on the CPU (same Lambert maths three.js uses: hemisphere +
+   two directional lights + the crater's point light) and stored in vertex
+   colours. The GPU then just draws flat colours with fog: far cheaper than
+   evaluating four lights for every pixel of every frame. */
+const LIGHT = {
+  sky: new Color('#8fd8ff').multiplyScalar(1.2),
+  ground: new Color('#3a2014').multiplyScalar(1.2),
+  sun: { color: new Color('#ff9a6b').multiplyScalar(2.4), dir: new Vector3(-90, 30, -160).normalize() },
+  fill: { color: new Color('#ff7a59').multiplyScalar(0.7), dir: new Vector3(70, 50, 90).normalize() },
+  lava: { color: new Color('#ff5a1f').multiplyScalar(120), pos: null, cutoff: 60, decay: 1.6 },
+};
+const _irr = new Color(), _tmp = new Color(), _toL = new Vector3();
+function shade(albedo, n, p, out) {
+  _irr.lerpColors(LIGHT.ground, LIGHT.sky, 0.5 * n.y + 0.5);
+  _irr.add(_tmp.copy(LIGHT.sun.color).multiplyScalar(Math.max(0, n.dot(LIGHT.sun.dir))));
+  _irr.add(_tmp.copy(LIGHT.fill.color).multiplyScalar(Math.max(0, n.dot(LIGHT.fill.dir))));
+  const L = LIGHT.lava;
+  if (!L.pos) L.pos = new Vector3(ETNA.x, height(ETNA.x, ETNA.z) + 4, ETNA.z);
+  _toL.subVectors(L.pos, p);
+  const d = _toL.length();
+  if (d < L.cutoff) {
+    const fall = (1 / Math.max(Math.pow(d, L.decay), 0.01)) * Math.pow(Math.min(1, Math.max(0, 1 - Math.pow(d / L.cutoff, 4))), 2);
+    _irr.add(_tmp.copy(L.color).multiplyScalar(fall * Math.max(0, n.dot(_toL.normalize()))));
+  }
+  return out.copy(albedo).multiply(_irr).multiplyScalar(1 / Math.PI);
+}
+
+// The terrain is split into a 4×4 grid of chunks so three.js can skip the ones
+// outside the view (behind the camera, off to the side, or past the far plane).
 function buildTerrain(low) {
-  const W = 300, D = 240;
-  const geo = new PlaneGeometry(W, D, low ? 100 : 190, low ? 80 : 152);
-  geo.rotateX(-Math.PI / 2);
-  geo.translate(0, 0, -50);
+  const W = 300, D = 240, CX = 4, CZ = 4;
+  const segX = (low ? 100 : 160) / CX, segZ = (low ? 80 : 128) / CZ;
+  const mat = new MeshBasicMaterial({ vertexColors: true });
+  const group = new Group();
+  for (let i = 0; i < CX; i++) {
+    for (let j = 0; j < CZ; j++) {
+      const geo = new PlaneGeometry(W / CX, D / CZ, segX, segZ);
+      geo.rotateX(-Math.PI / 2);
+      geo.translate(-W / 2 + (W / CX) * (i + 0.5), 0, -50 - D / 2 + (D / CZ) * (j + 0.5));
+      const chunk = buildChunk(geo);
+      if (!chunk) continue;               // entirely under the sea
+      const mesh = new Mesh(chunk, mat);
+      mesh.matrixAutoUpdate = false;
+      group.add(mesh);
+    }
+  }
+  return { mesh: group };
+}
+
+function buildChunk(geo) {
   const pos = geo.attributes.position;
   for (let i = 0; i < pos.count; i++) {
-    const x = pos.getX(i), z = pos.getZ(i);
+    // round so vertices shared by neighbouring chunks get the exact same jitter (no seams)
+    const x = Math.round(pos.getX(i) * 1000) / 1000, z = Math.round(pos.getZ(i) * 1000) / 1000;
     // jitter the grid a little so it reads hand-made rather than gridded
     const jx = (hash(x, z) - 0.5) * 0.6, jz = (hash(z, x) - 0.5) * 0.6;
     pos.setXYZ(i, x + jx, height(x + jx, z + jz), z + jz);
   }
   const flat = geo.toNonIndexed();
   flat.computeVertexNormals();
+  const p = flat.attributes.position, n = flat.attributes.normal;
 
-  const p = flat.attributes.position;
-  const n = flat.attributes.normal;
-  const colors = new Float32Array(p.count * 3);
-  const c = new Color();
+  // keep only faces that can be seen: anything fully under the sea surface is skipped
+  const SEA = -0.9;
+  const keep = [];
   for (let i = 0; i < p.count; i += 3) {
-    const h = (p.getY(i) + p.getY(i + 1) + p.getY(i + 2)) / 3;
-    colorAt(h, c);
-    const slope = 1 - n.getY(i);
-    c.multiplyScalar(1 - slope * 0.35 + (hash(p.getX(i), p.getZ(i)) - 0.5) * 0.12);
-    for (let k = 0; k < 3; k++) { colors[(i + k) * 3] = c.r; colors[(i + k) * 3 + 1] = c.g; colors[(i + k) * 3 + 2] = c.b; }
+    if (p.getY(i) > SEA || p.getY(i + 1) > SEA || p.getY(i + 2) > SEA) keep.push(i);
   }
-  flat.setAttribute('color', new Float32BufferAttribute(colors, 3));
+  if (!keep.length) return null;
 
-  const mat = new MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 0.92, metalness: 0.05 });
-  return { mesh: new Mesh(flat, mat) };
+  const outPos = new Float32Array(keep.length * 9);
+  const colors = new Float32Array(keep.length * 9);
+  const albedo = new Color(), lit = new Color(), normal = new Vector3(), centre = new Vector3();
+  keep.forEach((i, f) => {
+    const h = (p.getY(i) + p.getY(i + 1) + p.getY(i + 2)) / 3;
+    colorAt(h, albedo);
+    normal.set(n.getX(i), n.getY(i), n.getZ(i));
+    albedo.multiplyScalar(1 - (1 - normal.y) * 0.35 + (hash(p.getX(i), p.getZ(i)) - 0.5) * 0.12);
+    centre.set((p.getX(i) + p.getX(i + 1) + p.getX(i + 2)) / 3, h, (p.getZ(i) + p.getZ(i + 1) + p.getZ(i + 2)) / 3);
+    shade(albedo, normal, centre, lit);
+    for (let k = 0; k < 3; k++) {
+      const o = f * 9 + k * 3;
+      outPos[o] = p.getX(i + k); outPos[o + 1] = p.getY(i + k); outPos[o + 2] = p.getZ(i + k);
+      colors[o] = lit.r; colors[o + 1] = lit.g; colors[o + 2] = lit.b;
+    }
+  });
+  const out = new BufferGeometry();
+  out.setAttribute('position', new Float32BufferAttribute(outPos, 3));
+  out.setAttribute('color', new Float32BufferAttribute(colors, 3));
+  out.computeBoundingSphere();
+  return out;
 }
 
 /* ---------- lava ----------------------------------------------------------- */
@@ -187,7 +250,7 @@ function buildSmoke(count) {
       void main() {
         vAge = aAge;
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = (90.0 + aAge * 380.0) * uScale / -mv.z;
+        gl_PointSize = min((90.0 + aAge * 380.0) * uScale / -mv.z, 260.0 * uScale);
         gl_Position = projectionMatrix * mv;
       }`,
     fragmentShader: `
@@ -206,30 +269,28 @@ function buildSmoke(count) {
 /* ---------- scene ---------------------------------------------------------- */
 
 export function createScene(canvas, { low = false, reduced = () => false } = {}) {
-  const renderer = new WebGLRenderer({ canvas, antialias: !low, alpha: true, powerPreference: low ? 'low-power' : 'high-performance' });
+  const dpr = window.devicePixelRatio || 1;
+  // MSAA is expensive and pointless on dense screens: only use it on 1× displays
+  const renderer = new WebGLRenderer({ canvas, antialias: !low && dpr < 1.5, alpha: true, powerPreference: low ? 'low-power' : 'high-performance' });
   canvas.addEventListener('webglcontextlost', () => document.documentElement.classList.add('no-webgl'));
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, low ? 1.25 : 1.75));
+  const maxRatio = Math.min(dpr, low ? 1.25 : 1.5);
+  let ratio = maxRatio;
+  renderer.setPixelRatio(ratio);
   renderer.setClearColor(0x000000, 0);
 
   const scene = new Scene();
   scene.fog = new Fog('#ff7f50', 40, 190);
 
-  const camera = new PerspectiveCamera(48, 1, 0.5, 600);
+  const camera = new PerspectiveCamera(48, 1, 0.5, 280); // nothing past the fog is worth drawing
 
-  scene.add(new HemisphereLight('#8fd8ff', '#3a2014', 1.2));
-  const sun = new DirectionalLight('#ff9a6b', 2.4);   // sunset behind the volcano
-  sun.position.set(-90, 30, -160);
-  scene.add(sun);
-  const fill = new DirectionalLight('#ff7a59', 0.7);   // coral bounce from the sea side
-  fill.position.set(70, 50, 90);
-  scene.add(fill);
+  // lighting is baked into terrain and sea (see LIGHT / shade above): no runtime lights
 
   const terrain = buildTerrain(low);
   scene.add(terrain.mesh);
 
   const sea = new Mesh(
     new PlaneGeometry(600, 400),
-    new MeshStandardMaterial({ color: '#11607a', emissive: '#0a3a4a', emissiveIntensity: 0.6, roughness: 0.95, metalness: 0.05 }),
+    new MeshBasicMaterial({ color: shade(new Color('#11607a'), new Vector3(0, 1, 0), new Vector3(0, 0, 80), new Color()).add(new Color('#0a3a4a').multiplyScalar(0.6)) }),
   );
   sea.rotation.x = -Math.PI / 2;
   sea.position.set(0, -0.6, 0);
@@ -241,9 +302,30 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
   crater.rotation.x = -Math.PI / 2;
   crater.position.set(ETNA.x, craterY + 0.15, ETNA.z);
   scene.add(crater);
-  const lavaLight = new PointLight('#ff5a1f', 140, 60, 1.6);
-  lavaLight.position.set(ETNA.x, craterY + 4, ETNA.z);
-  scene.add(lavaLight);
+
+  // soft pulsing glow over the vent (replaces the old real-time point light)
+  const glowGeo = new BufferGeometry();
+  glowGeo.setAttribute('position', new Float32BufferAttribute([ETNA.x, craterY + 1.8, ETNA.z], 3));
+  const glow = new Points(glowGeo, new ShaderMaterial({
+    transparent: true, depthWrite: false, depthTest: false, blending: AdditiveBlending,
+    uniforms: { uScale: { value: 1 }, uPulse: { value: 1 } },
+    vertexShader: `
+      uniform float uScale;
+      void main() {
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = min(9000.0 * uScale / -mv.z, 360.0 * uScale);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `
+      uniform float uPulse;
+      void main() {
+        float d = length(gl_PointCoord - 0.5) * 2.0;
+        float a = pow(max(0.0, 1.0 - d), 2.0) * 0.9 * uPulse;
+        gl_FragColor = vec4(1.0, 0.45, 0.15, a);
+      }`,
+  }));
+  glow.frustumCulled = false;
+  scene.add(glow);
 
   // lava flows down the flank facing the city
   const lavaMats = [];
@@ -268,17 +350,17 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
   embers.frustumCulled = false;
   scene.add(embers);
 
-  const smoke = buildSmoke(low ? 40 : 80);
+  const smoke = buildSmoke(low ? 32 : 60);
   scene.add(smoke.points);
 
   // stars appear as the climb gets darker
-  const STARS = low ? 300 : 700;
+  const STARS = low ? 250 : 500;
   const starPos = new Float32Array(STARS * 3);
   for (let i = 0; i < STARS; i++) {
     const t = Math.random() * Math.PI * 2, ph = Math.random() * 0.45 * Math.PI;
-    starPos[i * 3] = Math.cos(t) * Math.cos(ph) * 400;
-    starPos[i * 3 + 1] = Math.sin(ph) * 400 + 30;
-    starPos[i * 3 + 2] = Math.sin(t) * Math.cos(ph) * 400 - 100;
+    starPos[i * 3] = Math.cos(t) * Math.cos(ph) * 220;
+    starPos[i * 3 + 1] = Math.sin(ph) * 220 + 30;
+    starPos[i * 3 + 2] = Math.sin(t) * Math.cos(ph) * 220 - 40;
   }
   const starGeo = new BufferGeometry();
   starGeo.setAttribute('position', new Float32BufferAttribute(starPos, 3));
@@ -313,7 +395,8 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
     camera.aspect = width / heightPx;
     camera.fov = width < 720 ? 56 : 48;
     camera.updateProjectionMatrix();
-    smoke.points.material.uniforms.uScale.value = renderer.getPixelRatio() * heightPx / 900;
+    smoke.points.material.uniforms.uScale.value = ratio * heightPx / 900;
+    glow.material.uniforms.uScale.value = ratio * heightPx / 900;
     if (reduced()) renderOnce();
   }
 
@@ -344,8 +427,8 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
     starMat.opacity = 0.15 + p * 0.75;
 
     if (!still) t += dt;
-    lavaLight.intensity = 120 + Math.sin(t * 2.1) * 25 + Math.sin(t * 5.3) * 10;
     for (const m of lavaMats) m.uniforms.uTime.value = t;
+    glow.material.uniforms.uPulse.value = 0.85 + Math.sin(t * 2.1) * 0.15 + Math.sin(t * 5.3) * 0.06;
     const ep = embers.geometry.attributes.position;
     for (let i = 0; i < EMBERS; i++) {
       const [a, b, c] = emberSeed[i];
@@ -372,15 +455,43 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
     ageAttr.needsUpdate = true;
   }
 
-  const frameBudget = low ? 1000 / 24 : 0; // ~30fps cap on low-power devices
+  // Frame pacing: full rate while the user scrolls or moves the pointer, ~30fps once
+  // things are calm (lava and smoke are slow anyway), ~24fps on low-power devices.
+  let lastActivity = performance.now();
+  const markActive = () => { lastActivity = performance.now(); };
+  window.addEventListener('pointermove', markActive, { passive: true });
+  const budget = (now) => (low ? 1000 / 24 : now - lastActivity > 1500 ? 1000 / 30 : 0);
+
+  // Adaptive resolution: if frames are consistently slow, render fewer pixels;
+  // scale back up when there is headroom again.
+  let avg = 16, slowFor = 0, fastFor = 0;
+  function adapt(ms, paced) {
+    if (paced) return;                       // throttled frames say nothing about the GPU
+    avg += (ms - avg) * 0.1;
+    if (avg > 26) { slowFor += ms; fastFor = 0; } else if (avg < 18) { fastFor += ms; slowFor = 0; } else { slowFor = fastFor = 0; }
+    const minRatio = Math.max(0.6, maxRatio * 0.5);
+    if (slowFor > 1500 && ratio > minRatio) { setRatio(Math.max(minRatio, ratio - 0.15)); slowFor = 0; }
+    else if (fastFor > 4000 && ratio < maxRatio) { setRatio(Math.min(maxRatio, ratio + 0.1)); fastFor = 0; }
+  }
+  function setRatio(r) {
+    ratio = r;
+    renderer.setPixelRatio(ratio);
+    renderer.setSize(width, heightPx, false);
+    smoke.points.material.uniforms.uScale.value = ratio * heightPx / 900;
+    glow.material.uniforms.uScale.value = ratio * heightPx / 900;
+  }
+
   function frame(now) {
     rafId = 0;
     if (!running) return;
-    if (now - last >= frameBudget) {
-      const dt = Math.min(0.05, (now - last) / 1000);
+    const covered = document.body.classList.contains('has-modal'); // menu or case study on top: nothing to see
+    const minGap = budget(now);
+    if (!covered && now - last >= minGap - 1) {
+      const ms = now - last;
       last = now;
-      update(dt);
+      update(Math.min(0.05, ms / 1000));
       renderer.render(scene, camera);
+      adapt(ms, minGap > 0);
     }
     if (!reduced()) rafId = requestAnimationFrame(frame);
   }
@@ -394,6 +505,7 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
 
   return {
     setProgress(p, horizonRgb) {
+      if (p !== state.p) markActive();
       state.p = p;
       if (horizonRgb) scene.fog.color.setStyle(`rgb(${horizonRgb.join(',')})`);
       if (reduced()) { state.cp = p; renderOnce(); } else start();

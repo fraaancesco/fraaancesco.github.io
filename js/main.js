@@ -401,7 +401,7 @@ function openCase(key, card) {
   originCard = card;
   fillCase(PROJECTS[key]);
   $('.case__scroll', dialog).scrollTop = 0;
-  dialog.showModal();
+  if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', '');
   document.body.classList.add('has-modal');
   if (!reduced && panel.animate) panel.animate(flipFrom(card), { duration: 650, easing: 'cubic-bezier(.7,0,.2,1)' });
   requestAnimationFrame(() => dialog.classList.add('is-ready'));
@@ -409,7 +409,7 @@ function openCase(key, card) {
 function closeCase() {
   dialog.classList.remove('is-ready');
   const done = () => {
-    dialog.close();
+    if (dialog.close) dialog.close(); else dialog.removeAttribute('open');
     document.body.classList.remove('has-modal');
     $('.poster__open', originCard)?.focus({ preventScroll: true });
   };

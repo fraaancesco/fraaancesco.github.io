@@ -5,10 +5,10 @@
 */
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Color, Fog, Vector3,
-  PlaneGeometry, CircleGeometry, TubeGeometry, BufferGeometry, Float32BufferAttribute,
+  PlaneGeometry, CircleGeometry, BufferGeometry, Float32BufferAttribute,
   MeshStandardMaterial, MeshBasicMaterial, PointsMaterial, ShaderMaterial,
   Mesh, Points, HemisphereLight, DirectionalLight, PointLight,
-  CatmullRomCurve3, AdditiveBlending, MathUtils,
+  CatmullRomCurve3, AdditiveBlending, MathUtils, UniformsLib,
 } from 'three';
 
 /* ---------- terrain ------------------------------------------------------ */
@@ -45,7 +45,7 @@ function height(x, z) {
 // height → colour: sea-level teal, green hills, terracotta & gold slopes, dark ash at the top
 const STOPS = [
   [-3, '#0e4a5a'], [1.5, '#13606a'], [6, '#1f7a5c'], [12, '#5f8f3e'],
-  [18, '#c8763a'], [24, '#e5553d'], [28, '#f0a03c'], [30.5, '#3a2a24'], [32.5, '#d9d2c6'], [36, '#f7f3ec'],
+  [18, '#8a4b2c'], [24, '#8e3527'], [28, '#6b3a26'], [30.5, '#2a1f1b'], [32.5, '#b9b2a8'], [36, '#ece6dc'],
 ].map(([h, c]) => [h, new Color(c)]);
 function colorAt(h, out) {
   if (h <= STOPS[0][0]) return out.copy(STOPS[0][1]);
@@ -90,6 +90,43 @@ function buildTerrain(low) {
 
 /* ---------- lava ----------------------------------------------------------- */
 
+// a flow is a ribbon draped on the slope: dark cooling crust with glowing cracks
+// that drift downhill; hotter near the vent, cooler and darker further down
+const LAVA_VERT = `
+  varying vec2 vUv;
+  #include <fog_pars_vertex>
+  void main() {
+    vUv = uv;
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * mvPosition;
+    #include <fog_vertex>
+  }`;
+const LAVA_FRAG = `
+  uniform float uTime; uniform float uLen;
+  varying vec2 vUv;
+  #include <fog_pars_fragment>
+  float h(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+  float n(vec2 p) {
+    vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y);
+  }
+  float fbm(vec2 p) { float s = 0.0, a = 0.5; for (int i = 0; i < 4; i++) { s += a * n(p); p *= 2.1; a *= 0.5; } return s; }
+  void main() {
+    float along = vUv.y;                       // 0 at the vent → 1 at the tongue
+    float across = abs(vUv.x - 0.5) * 2.0;     // 0 centre → 1 edge
+    vec2 q = vec2(vUv.x * 2.5, along * uLen * 0.55 - uTime * 0.12);
+    float cracks = fbm(q + fbm(q * 1.7 + uTime * 0.05));
+    float heat = pow(1.0 - along, 1.3) * 0.85 + 0.15;          // cools downhill
+    heat *= 1.0 - smoothstep(0.35, 1.0, across);               // edges cool first
+    float glow = smoothstep(0.52 - heat * 0.22, 0.72, cracks) * heat;
+    vec3 crust = mix(vec3(0.07, 0.035, 0.03), vec3(0.18, 0.06, 0.03), heat);
+    vec3 molten = mix(vec3(0.85, 0.12, 0.02), vec3(1.0, 0.78, 0.35), smoothstep(0.4, 1.0, glow));
+    vec3 col = mix(crust, molten * 1.4, clamp(glow * 1.6 + heat * 0.12, 0.0, 1.0));
+    float alpha = (1.0 - smoothstep(0.75, 1.0, across)) * (1.0 - smoothstep(0.88, 1.0, along));
+    gl_FragColor = vec4(col, alpha);
+    #include <fog_fragment>
+  }`;
+
 function lavaStream(angle, steps) {
   const pts = [];
   let x = ETNA.x + Math.cos(angle) * (CRATER_R + 0.4);
@@ -106,6 +143,31 @@ function lavaStream(angle, steps) {
     z += (-gz / len) * 0.9 + wobble * 0.2;
   }
   return new CatmullRomCurve3(pts);
+}
+
+function lavaRibbon(curve, width) {
+  const SEG = 140;
+  const pos = [], uv = [], idx = [];
+  const p = new Vector3(), tan = new Vector3();
+  for (let i = 0; i <= SEG; i++) {
+    const t = i / SEG;
+    curve.getPointAt(t, p);
+    curve.getTangentAt(t, tan);
+    // side vector in the ground plane; flows widen as they slow down, with a ragged edge
+    const sx = -tan.z, sz = tan.x, sl = Math.hypot(sx, sz) || 1;
+    const w = width * (0.55 + 0.9 * Math.sqrt(t)) * (0.8 + 0.4 * vnoise(t * 9, width * 7));
+    for (const side of [-1, 1]) {
+      const x = p.x + (sx / sl) * w * side, z = p.z + (sz / sl) * w * side;
+      pos.push(x, height(x, z) + 0.12, z);
+      uv.push(side < 0 ? 0 : 1, t);
+    }
+    if (i < SEG) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  }
+  const geo = new BufferGeometry();
+  geo.setAttribute('position', new Float32BufferAttribute(pos, 3));
+  geo.setAttribute('uv', new Float32BufferAttribute(uv, 2));
+  geo.setIndex(idx);
+  return geo;
 }
 
 /* ---------- smoke ---------------------------------------------------------- */
@@ -175,7 +237,7 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
 
   // crater: molten disc + light
   const craterY = height(ETNA.x, ETNA.z);
-  const crater = new Mesh(new CircleGeometry(CRATER_R * 0.75, 24), new MeshBasicMaterial({ color: '#ff7a2a', fog: false }));
+  const crater = new Mesh(new CircleGeometry(CRATER_R * 0.75, 24), new MeshBasicMaterial({ color: '#ff5a14', fog: false }));
   crater.rotation.x = -Math.PI / 2;
   crater.position.set(ETNA.x, craterY + 0.15, ETNA.z);
   scene.add(crater);
@@ -183,14 +245,28 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
   lavaLight.position.set(ETNA.x, craterY + 4, ETNA.z);
   scene.add(lavaLight);
 
-  // lava streams down the flank facing the city
-  const lavaCore = new MeshBasicMaterial({ color: '#ffb347', fog: false });
-  const lavaGlow = new MeshBasicMaterial({ color: '#ff3d1f', transparent: true, opacity: 0.28, blending: AdditiveBlending, depthWrite: false, fog: false });
-  [Math.PI * 0.42, Math.PI * 0.6, Math.PI * 0.18].forEach((a, i) => {
-    const curve = lavaStream(a, 26 - i * 5);
-    scene.add(new Mesh(new TubeGeometry(curve, 90, 0.13, 5), lavaCore));
-    scene.add(new Mesh(new TubeGeometry(curve, 60, 0.45, 6), lavaGlow));
+  // lava flows down the flank facing the city
+  const lavaMats = [];
+  [[Math.PI * 0.42, 30, 1.1], [Math.PI * 0.62, 22, 0.8], [Math.PI * 0.2, 17, 0.7]].forEach(([a, steps, w]) => {
+    const curve = lavaStream(a, steps);
+    const mat = new ShaderMaterial({
+      uniforms: { ...UniformsLib.fog, uTime: { value: 0 }, uLen: { value: curve.getLength() } },
+      vertexShader: LAVA_VERT, fragmentShader: LAVA_FRAG,
+      transparent: true, depthWrite: false, fog: true,
+      polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2,
+    });
+    lavaMats.push(mat);
+    scene.add(new Mesh(lavaRibbon(curve, w), mat));
   });
+
+  // embers: sparks thrown up from the vent
+  const EMBERS = low ? 30 : 70;
+  const emberGeo = new BufferGeometry();
+  emberGeo.setAttribute('position', new Float32BufferAttribute(new Float32Array(EMBERS * 3), 3));
+  const emberSeed = Array.from({ length: EMBERS }, () => [Math.random(), Math.random(), Math.random()]);
+  const embers = new Points(emberGeo, new PointsMaterial({ color: '#ffb35c', size: 2.2, sizeAttenuation: false, transparent: true, opacity: 0.9, blending: AdditiveBlending, depthWrite: false, fog: false }));
+  embers.frustumCulled = false;
+  scene.add(embers);
 
   const smoke = buildSmoke(low ? 40 : 80);
   scene.add(smoke.points);
@@ -269,6 +345,16 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
 
     if (!still) t += dt;
     lavaLight.intensity = 120 + Math.sin(t * 2.1) * 25 + Math.sin(t * 5.3) * 10;
+    for (const m of lavaMats) m.uniforms.uTime.value = t;
+    const ep = embers.geometry.attributes.position;
+    for (let i = 0; i < EMBERS; i++) {
+      const [a, b, c] = emberSeed[i];
+      const life = (t * (0.25 + a * 0.3) + b) % 1;          // each spark loops on its own clock
+      const ang = c * Math.PI * 2;
+      const r = life * (1.5 + a * 3);
+      ep.setXYZ(i, ETNA.x + Math.cos(ang) * r, craterY + life * (6 + b * 6) - life * life * 5, ETNA.z + Math.sin(ang) * r);
+    }
+    ep.needsUpdate = true;
 
     // smoke: each puff rises from the crater and drifts with the wind
     const pos = smoke.points.geometry.attributes.position;
@@ -286,7 +372,7 @@ export function createScene(canvas, { low = false, reduced = () => false } = {})
     ageAttr.needsUpdate = true;
   }
 
-  const frameBudget = low ? 1000 / 32 : 0; // ~30fps cap on low-power devices
+  const frameBudget = low ? 1000 / 24 : 0; // ~30fps cap on low-power devices
   function frame(now) {
     rafId = 0;
     if (!running) return;
